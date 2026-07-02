@@ -1,0 +1,189 @@
+import nodemailer from 'nodemailer';
+import logger from '../configs/logger';
+
+// Dynamic SMTP configuration
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.ethereal.email',
+  port: Number(process.env.SMTP_PORT) || 587,
+  secure: process.env.SMTP_SECURE === 'true', // true for 465, false for 587/25
+  auth: {
+    user: process.env.SMTP_USER || 'ethereal.user@ethereal.email',
+    pass: process.env.SMTP_PASS || 'ethereal-pass',
+  },
+});
+
+/**
+ * Global helper to send standard transactional HTML emails.
+ * Degrades gracefully by logging simulated emails if SMTP credentials are the defaults or missing.
+ */
+export const sendEmail = async (to: string, subject: string, html: string): Promise<boolean> => {
+  try {
+    const isMockSettings = 
+      !process.env.SMTP_USER || 
+      process.env.SMTP_USER.includes('ethereal.user') || 
+      !process.env.SMTP_PASS;
+
+    if (isMockSettings) {
+      logger.warn(`SMTP Credentials not configured. SIMULATED EMAIL DELIVERED:
+=========================================
+TO: ${to}
+SUBJECT: ${subject}
+BODY: (HTML Content omitted, logger synced)
+=========================================`);
+      return true;
+    }
+
+    const from = process.env.SMTP_FROM_EMAIL || 'SaaS Society <noreply@saassociety.com>';
+    const info = await transporter.sendMail({
+      from,
+      to,
+      subject,
+      html,
+    });
+    
+    logger.info(`SMTP: Email successfully delivered to ${to}. MessageId: ${info.messageId}`);
+    return true;
+  } catch (error) {
+    logger.error(`SMTP: Failed to deliver email to ${to}:`, error);
+    return false;
+  }
+};
+
+/**
+ * 1. welcome onboarding template for Newly registered Society Admins
+ */
+export const getAdminOnboardTemplate = (
+  firstName: string,
+  tenantName: string,
+  tenantSlug: string,
+  email: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
+    <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">Welcome to SaaS Society! 🏢</h2>
+    <p>Dear ${firstName},</p>
+    <p>We are excited to inform you that your multi-tenant society workspace <strong>${tenantName}</strong> has been successfully registered and initialized.</p>
+    <p>Below are your dynamic dashboard access parameters. Keep this details safe:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Workspace Slug:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${tenantSlug}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Admin Username:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);">${email}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Setup Password:</strong></td><td style="padding: 10px; color: #f8fafc;"><em>Configured during register checkout</em></td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">You can onboard your residents, generate dynamic maintenance invoices via stored procedures, and setup emergency alarm workflows from your control room.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">This is a system generated email. Please do not reply.</p>
+  </div>
+  `;
+};
+
+/**
+ * 2. Onboard template for Residents flat owners
+ */
+export const getResidentOnboardTemplate = (
+  firstName: string,
+  lastName: string,
+  tenantName: string,
+  tenantSlug: string,
+  email: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
+    <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">Welcome to Your New Home! 🔑</h2>
+    <p>Dear ${firstName} ${lastName},</p>
+    <p>You have been officially onboarded as a Resident occupant in <strong>${tenantName}</strong>.</p>
+    <p>Your secure access profile has been created. Please log in using the temporary credentials below:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Workspace Slug:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${tenantSlug}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Access Email:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);">${email}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Temporary Password:</strong></td><td style="padding: 10px; color: #f8fafc;">welcome123</td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">Log in to file complaints with AI categorization, download QR gate passes, and pay maintenance invoices using ourUPI sandboxes.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Helpdesk & Identity System</p>
+  </div>
+  `;
+};
+
+/**
+ * 3. Onboard template for service staff and guards
+ */
+export const getStaffOnboardTemplate = (
+  firstName: string,
+  lastName: string,
+  type: string,
+  tenantName: string,
+  tenantSlug: string,
+  email: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
+    <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">Staff Profile Configured 🛠️</h2>
+    <p>Hello ${firstName} ${lastName},</p>
+    <p>You have been onboarded as an active staff specialist (<strong>${type}</strong>) in <strong>${tenantName}</strong>.</p>
+    <p>A secure portal login profile has been successfully created for your shift operations:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Workspace Slug:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${tenantSlug}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Login Email:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);">${email}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Temporary Password:</strong></td><td style="padding: 10px; color: #f8fafc;">welcome123</td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">You can now log in to verify guest QR gate passes, check-in visitors, or update and comment on complaints assigned to your department.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Infrastructure System</p>
+  </div>
+  `;
+};
+
+/**
+ * 4. Visitor gate check-in alert email to Resident flat host
+ */
+export const getVisitorGateAlertTemplate = (
+  visitorName: string,
+  visitorType: string,
+  vehicleNumber: string | null,
+  purpose: string | null,
+  flatNumber: string,
+  checkInTime: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
+    <h2 style="color: #f43f5e; margin-bottom: 20px; text-align: center;">🚨 Gate Security Check-In Alert</h2>
+    <p>Dear Resident,</p>
+    <p>This is a real-time safety alert to inform you that a visitor has checked in at the main guard post to visit your flat (<strong>${flatNumber}</strong>):</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Visitor Name:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${visitorName}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Visitor Type:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05);">${visitorType}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Vehicle Plate:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05);">${vehicleNumber || 'None'}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Stated Purpose:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05);">${purpose || 'Not stated'}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Check-In Time:</strong></td><td style="padding: 10px; color: #10b981;"><strong>${checkInTime}</strong></td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1; text-align: center; background: rgba(244,63,94,0.1); padding: 10px; border-radius: 10px; border: 1px solid rgba(244,63,94,0.2);">If you did not authorize this gate pass entry, contact Main Guard checkpoint immediately.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Real-time Safety Monitoring</p>
+  </div>
+  `;
+};
+
+/**
+ * 5. Complaint ticket updates template
+ */
+export const getComplaintUpdateTemplate = (
+  recipientName: string,
+  ticketNumber: string,
+  title: string,
+  status: string,
+  category: string,
+  actionText: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
+    <h2 style="color: #06b6d4; margin-bottom: 20px; text-align: center;">📝 Complaint SLA Status Update</h2>
+    <p>Dear ${recipientName},</p>
+    <p>There is a new operational progress update regarding the following service ticket:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Ticket ID:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05);">${ticketNumber}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Issue Title:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${title}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Category:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);">${category}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>New Status:</strong></td><td style="padding: 10px; color: #06b6d4; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${status}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Activity Update:</strong></td><td style="padding: 10px; color: #10b981;"><strong>${actionText}</strong></td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">You can check the full thread history or reply directly inside the dashboard Complaints panel.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Helpdesk & SLA Tracker</p>
+  </div>
+  `;
+};

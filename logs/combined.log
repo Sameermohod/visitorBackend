@@ -1,0 +1,431 @@
+[2026-05-25 14:40:28:4028] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 14:40:28:4028] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/residents/directory - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/visitors/logs - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/complaints - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/billing/invoices - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/notices - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:41:36:4136] [[31merror[39m]: [31mGET /api/v1/visitors/my-approvals - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:42:36[39m
+
+[31m  39 let tenant;[39m
+[31m  40 [39m
+[31m  41 if (tenantId) {[39m
+[31m→ 42   tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-05-25 14:56:12:5612] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 14:56:12:5612] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 15:03:03:33] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 15:03:03:33] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 15:06:25:625] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 15:06:25:625] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 15:06:43:643] [[32minfo[39m]: [32mAuth: New tenant pyramidcity created successfully by mohodvarsha2@gmail.com.[39m
+[2026-05-25 15:06:45:645] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: [39m
+[31mInvalid `prisma.user.update()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\modules\auth\auth.controller.ts:95:25[39m
+
+[31m  92 );[39m
+[31m  93 [39m
+[31m  94 // Save refresh token to user[39m
+[31m→ 95 await prisma.user.update([39m
+[31mThe provided value for the column is too long for the column's type. Column: (not available)[39m
+[2026-05-25 15:07:30:730] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: [39m
+[31mInvalid `prisma.user.update()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\modules\auth\auth.controller.ts:95:25[39m
+
+[31m  92 );[39m
+[31m  93 [39m
+[31m  94 // Save refresh token to user[39m
+[31m→ 95 await prisma.user.update([39m
+[31mThe provided value for the column is too long for the column's type. Column: (not available)[39m
+[2026-05-25 15:09:16:916] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 15:09:16:916] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 15:09:22:922] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: [39m
+[31mInvalid `prisma.user.update()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\modules\auth\auth.controller.ts:95:25[39m
+
+[31m  92 );[39m
+[31m  93 [39m
+[31m  94 // Save refresh token to user[39m
+[31m→ 95 await prisma.user.update([39m
+[31mThe provided value for the column is too long for the column's type. Column: (not available)[39m
+[2026-05-25 15:10:09:109] [[32minfo[39m]: [32mAuth: New tenant sameertest created successfully by mohodvarsha2@gmail.com.[39m
+[2026-05-25 15:10:12:1012] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: [39m
+[31mInvalid `prisma.user.update()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\modules\auth\auth.controller.ts:95:25[39m
+
+[31m  92 );[39m
+[31m  93 [39m
+[31m  94 // Save refresh token to user[39m
+[31m→ 95 await prisma.user.update([39m
+[31mThe provided value for the column is too long for the column's type. Column: (not available)[39m
+[2026-05-25 15:11:04:114] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 15:11:04:114] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 15:11:09:119] [[32minfo[39m]: [32mAuth: User mohodvarsha2@gmail.com logged in successfully.[39m
+[2026-05-25 15:12:26:1226] [[31merror[39m]: [31mPOST /api/v1/residents/onboard - Error: [[39m
+[31m  {[39m
+[31m    "validation": "uuid",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid uuid",[39m
+[31m    "path": [[39m
+[31m      "flatId"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-25 15:12:41:1241] [[31merror[39m]: [31mPOST /api/v1/residents/onboard - Error: [[39m
+[31m  {[39m
+[31m    "validation": "uuid",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid uuid",[39m
+[31m    "path": [[39m
+[31m      "flatId"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-25 15:22:03:223] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 15:22:03:223] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 15:29:12:2912] [[32minfo[39m]: [32mAuth: New tenant test created successfully by test@yopmail.com.[39m
+[2026-05-25 15:29:15:2915] [[32minfo[39m]: [32mAuth: User test@yopmail.com logged in successfully.[39m
+[2026-05-25 15:35:20:3520] [[31merror[39m]: [31mPOST /api/v1/residents/onboard - Error: [39m
+[31mInvalid `tx.resident.create()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\modules\resident\resident.controller.ts:86:44[39m
+
+[31m  83 }[39m
+[31m  84 [39m
+[31m  85 // Create Resident link[39m
+[31m→ 86 const resident = await tx.resident.create([39m
+[31mThe column `new` does not exist in the current database.[39m
+[2026-05-25 15:51:58:5158] [[32minfo[39m]: [32mAuth: New tenant testy created successfully by testy@yopmail.com.[39m
+[2026-05-25 15:52:00:520] [[32minfo[39m]: [32mAuth: User testy@yopmail.com logged in successfully.[39m
+[2026-05-25 15:58:28:5828] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 15:58:28:5828] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 16:00:10:010] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-25 16:00:10:010] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-25 16:05:57:557] [[32minfo[39m]: [32mStaff: Staff sam guard onboarded successfully.[39m
+[2026-05-25 16:11:01:111] [[32minfo[39m]: [32mAuth: User guard@saassociety.com logged in successfully.[39m
+[2026-05-25 16:14:19:1419] [[32minfo[39m]: [32mAuth: User resident@saassociety.com logged in successfully.[39m
+[2026-05-25 16:15:36:1536] [[32minfo[39m]: [32mAuth: User guard@saassociety.com logged in successfully.[39m
+[2026-05-26 00:44:43:4443] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-26 00:44:43:4443] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-26 00:46:54:4654] [[32minfo[39m]: [32mAuth: New tenant testone created successfully by testone@yopmail.com.[39m
+[2026-05-26 00:46:56:4656] [[32minfo[39m]: [32mAuth: User testone@yopmail.com logged in successfully.[39m
+[2026-05-26 00:50:18:5018] [[32minfo[39m]: [32mStaff: Staff Sameer Mohod onboarded successfully.[39m
+[2026-05-26 00:50:54:5054] [[32minfo[39m]: [32mAuth: User mohodvarsha3@gmail.com logged in successfully.[39m
+[2026-05-26 00:51:34:5134] [[32minfo[39m]: [32mAuth: User resident@saassociety.com logged in successfully.[39m
+[2026-05-26 00:52:57:5257] [[32minfo[39m]: [32mAuth: User guard@saassociety.com logged in successfully.[39m
+[2026-05-26 00:53:07:537] [[32minfo[39m]: [32mAuth: User superadmin@saassociety.com logged in successfully.[39m
+[2026-05-26 00:53:24:5324] [[32minfo[39m]: [32mAuth: User superadmin@saassociety.com logged in successfully.[39m
+[2026-05-29 14:40:59:4059] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 14:40:59:4059] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 14:42:28:4228] [[32minfo[39m]: [32mAuth: New tenant pyramidplus created successfully by vishnu@yopmail.com.[39m
+[2026-05-29 14:42:30:4230] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 14:46:07:467] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 14:46:07:467] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 14:50:46:5046] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 14:53:18:5318] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 14:56:13:5613] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 14:56:13:5613] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 14:57:47:5747] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 14:58:50:5850] [[31merror[39m]: [31mPOST /api/v1/staff/onboard - Error: [[39m
+[31m  {[39m
+[31m    "validation": "email",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid email",[39m
+[31m    "path": [[39m
+[31m      "email"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 14:59:24:5924] [[31merror[39m]: [31mPOST /api/v1/staff/onboard - Error: [[39m
+[31m  {[39m
+[31m    "validation": "email",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid email",[39m
+[31m    "path": [[39m
+[31m      "email"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 15:03:20:320] [[32minfo[39m]: [32mStaff: Staff sameer mohod onboarded successfully.[39m
+[2026-05-29 15:04:45:445] [[32minfo[39m]: [32mAuth: User shital@yopmail.com logged in successfully.[39m
+[2026-05-29 15:05:22:522] [[31merror[39m]: [31mPOST /api/v1/complaints/raise - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 10,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "String must contain at least 10 character(s)",[39m
+[31m    "path": [[39m
+[31m      "description"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 15:06:01:61] [[31merror[39m]: [31mPOST /api/v1/complaints/raise - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 10,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "String must contain at least 10 character(s)",[39m
+[31m    "path": [[39m
+[31m      "description"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 15:57:15:5715] [[32minfo[39m]: [32mAuth: User shital@yopmail.com logged in successfully.[39m
+[2026-05-29 15:57:34:5734] [[31merror[39m]: [31mPOST /api/v1/complaints/raise - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 10,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "String must contain at least 10 character(s)",[39m
+[31m    "path": [[39m
+[31m      "description"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 16:03:32:332] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 16:03:43:343] [[32minfo[39m]: [32mBilling: Invoking DB procedure_generate_monthly_bills for tenant: b7313767-f429-4c3f-8ce3-b0481f50119e[39m
+[2026-05-29 16:04:17:417] [[32minfo[39m]: [32mAuth: User shital@yopmail.com logged in successfully.[39m
+[2026-05-29 16:05:26:526] [[31merror[39m]: [31mPOST /api/v1/billing/pay - Error: [[39m
+[31m  {[39m
+[31m    "code": "invalid_type",[39m
+[31m    "expected": "number",[39m
+[31m    "received": "string",[39m
+[31m    "path": [[39m
+[31m      "amount"[39m
+[31m    ],[39m
+[31m    "message": "Expected number, received string"[39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 16:05:53:553] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 16:06:31:631] [[32minfo[39m]: [32mStaff: Staff chetab nawale onboarded successfully.[39m
+[2026-05-29 16:06:46:646] [[32minfo[39m]: [32mAuth: User chetan@yopmail.com logged in successfully.[39m
+[2026-05-29 16:08:23:823] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 16:08:46:846] [[31merror[39m]: [31mPOST /api/v1/staff/onboard - Error: [[39m
+[31m  {[39m
+[31m    "validation": "email",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid email",[39m
+[31m    "path": [[39m
+[31m      "email"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 16:09:26:926] [[31merror[39m]: [31mPOST /api/v1/staff/onboard - Error: [[39m
+[31m  {[39m
+[31m    "validation": "email",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid email",[39m
+[31m    "path": [[39m
+[31m      "email"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-05-29 16:13:01:131] [[32minfo[39m]: [32mStaff: Staff plumber last onboarded successfully.[39m
+[2026-05-29 16:13:33:1333] [[32minfo[39m]: [32mAuth: User plumber@yopmail.com logged in successfully.[39m
+[2026-05-29 16:52:29:5229] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:52:29:5229] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:52:40:5240] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:52:40:5240] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:52:47:5247] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:52:47:5247] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:52:59:5259] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:52:59:5259] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:08:538] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:08:538] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:17:5317] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:17:5317] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:26:5326] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:26:5326] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:32:5332] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:32:5332] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:40:5340] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:40:5340] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:48:5348] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:48:5348] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:53:58:5358] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:53:58:5358] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:54:10:5410] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:54:10:5410] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:54:18:5418] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:54:18:5418] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:55:00:550] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:55:00:550] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 16:55:09:559] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 16:55:09:559] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 17:10:20:1020] [[32minfo[39m]: [32mSMTP: Email successfully delivered to s46364512@gmail.com. MessageId: <94de8247-3881-f446-852d-fe736e0f0ce4@saassociety.com>[39m
+[2026-05-29 17:15:21:1521] [[32minfo[39m]: [32mAuth: User shital@yopmail.com logged in successfully.[39m
+[2026-05-29 17:17:46:1746] [[32minfo[39m]: [32mAuth: User plumber@yopmail.com logged in successfully.[39m
+[2026-05-29 17:17:58:1758] [[32minfo[39m]: [32mSMTP: Email successfully delivered to shital@yopmail.com. MessageId: <6891a29a-3ee4-7f03-0bae-c5a5045ea523@saassociety.com>[39m
+[2026-05-29 17:18:21:1821] [[32minfo[39m]: [32mAuth: User vishnu@yopmail.com logged in successfully.[39m
+[2026-05-29 17:18:36:1836] [[32minfo[39m]: [32mSMTP: Email successfully delivered to plumber@yopmail.com. MessageId: <027ec2d9-aec3-1e53-21d5-aa39259d9414@saassociety.com>[39m
+[2026-05-29 17:18:36:1836] [[32minfo[39m]: [32mSMTP: Email successfully delivered to shital@yopmail.com. MessageId: <cf4e2d41-695d-fce6-8654-dbfeeb8c2ab9@saassociety.com>[39m
+[2026-05-29 17:19:15:1915] [[32minfo[39m]: [32mAuth: User plumber@yopmail.com logged in successfully.[39m
+[2026-05-29 17:19:29:1929] [[32minfo[39m]: [32mSMTP: Email successfully delivered to shital@yopmail.com. MessageId: <d9c86659-b763-6e90-6096-ed0334e2d062@saassociety.com>[39m
+[2026-05-29 17:19:35:1935] [[32minfo[39m]: [32mSMTP: Email successfully delivered to shital@yopmail.com. MessageId: <91654cf0-2d1e-a96a-6b5b-4525a86d816e@saassociety.com>[39m
+[2026-05-29 17:20:10:2010] [[32minfo[39m]: [32mAuth: User shital@yopmail.com logged in successfully.[39m
+[2026-05-29 17:20:50:2050] [[32minfo[39m]: [32mSMTP: Email successfully delivered to shital@yopmail.com. MessageId: <3d764c97-3134-6f7e-455c-7fcacaf3d8a6@saassociety.com>[39m
+[2026-05-29 17:23:41:2341] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 17:23:41:2341] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 17:30:13:3013] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 17:30:13:3013] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-05-29 17:38:31:3831] [[32minfo[39m]: [32mAuth: User shital@yopmail.com logged in successfully.[39m
+[2026-05-29 17:41:23:4123] [[32minfo[39m]: [32mSMTP: Email successfully delivered to shital@yopmail.com. MessageId: <15d35517-4f93-bf0a-860a-b19e630a8aef@saassociety.com>[39m
+[2026-05-29 17:41:24:4124] [[32minfo[39m]: [32mSMTP: Email successfully delivered to plumber@yopmail.com. MessageId: <c3c53810-2f4e-cac8-0207-04c68bb7ea29@saassociety.com>[39m
+[2026-05-29 22:31:43:3143] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-05-29 22:31:43:3143] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-06-03 22:44:56:4456] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-06-03 22:44:56:4456] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-06-03 22:46:51:4651] [[32minfo[39m]: [32mAuth: New tenant testasd created successfully by sameer@yopmail.com.[39m
+[2026-06-03 22:46:55:4655] [[32minfo[39m]: [32mSMTP: Email successfully delivered to sameer@yopmail.com. MessageId: <51063e8c-cff3-42d9-e523-603fee0584c2@saassociety.com>[39m
+[2026-06-03 22:46:56:4656] [[32minfo[39m]: [32mAuth: User sameer@yopmail.com logged in successfully.[39m
+[2026-07-02 23:41:26:4126] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-07-02 23:41:26:4126] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-07-02 23:44:07:447] [[32minfo[39m]: [32mAuth: New tenant pariscity created successfully by prasad@yopmail.com.[39m
+[2026-07-02 23:44:11:4411] [[32minfo[39m]: [32mAuth: User prasad@yopmail.com logged in successfully.[39m
+[2026-07-02 23:44:12:4412] [[32minfo[39m]: [32mSMTP: Email successfully delivered to prasad@yopmail.com. MessageId: <657fd2e9-68be-d4c1-6836-2d2fd1404616@saassociety.com>[39m
+[2026-07-02 23:45:02:452] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-02 23:45:02:452] [[31merror[39m]: [31mAI Chat completion failed: Gemini API error: 404 - {[39m
+[31m  "error": {[39m
+[31m    "code": 404,[39m
+[31m    "message": "models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.",[39m
+[31m    "status": "NOT_FOUND"[39m
+[31m  }[39m
+[31m}[39m
+[31m[39m
+[2026-07-02 23:46:25:4625] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-07-02 23:46:25:4625] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-07-02 23:47:24:4724] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-02 23:47:26:4726] [[32minfo[39m]: [32mAI Chat: Executing tool "get_my_profile" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-02 23:47:26:4726] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-02 23:48:32:4832] [[32minfo[39m]: [32mStaff: Staff harsh puri onboarded successfully.[39m
+[2026-07-02 23:48:37:4837] [[32minfo[39m]: [32mSMTP: Email successfully delivered to harsh@yopmail.com. MessageId: <a4adff4f-640b-5fa9-9b0e-8788e427bbf9@saassociety.com>[39m
+[2026-07-02 23:48:59:4859] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-02 23:49:00:490] [[32minfo[39m]: [32mAI Chat: Executing tool "get_staff" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-02 23:49:00:490] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-02 23:52:27:5227] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-07-02 23:52:27:5227] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-07-02 23:54:10:5410] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-02 23:54:12:5412] [[32minfo[39m]: [32mAI Chat: Executing tool "search_directory" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-02 23:54:12:5412] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-02 23:54:28:5428] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-02 23:54:29:5429] [[32minfo[39m]: [32mAI Chat: Executing tool "search_directory" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-02 23:54:29:5429] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-03 00:01:22:122] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-07-03 00:01:22:122] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-07-03 00:12:10:1210] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-07-03 00:12:10:1210] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-07-03 00:12:47:1247] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-07-03 00:12:47:1247] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-07-03 00:20:05:205] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-03 00:20:36:2036] [[32minfo[39m]: [32mAuth: User prasad@yopmail.com logged in successfully.[39m
+[2026-07-03 00:20:44:2044] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-03 00:20:58:2058] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-03 00:20:59:2059] [[32minfo[39m]: [32mAI Chat: Executing tool "get_my_profile" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-03 00:20:59:2059] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-03 00:21:00:210] [[32minfo[39m]: [32mAI Chat: Executing tool "search_directory" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-03 00:21:00:210] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 3[39m
+[2026-07-03 00:24:10:2410] [[32minfo[39m]: [32mSMTP: Email successfully delivered to chetu@yopamil.com. MessageId: <f82989ad-8273-d45c-19ca-117cca3cf174@saassociety.com>[39m
+[2026-07-03 00:24:32:2432] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-03 00:24:34:2434] [[32minfo[39m]: [32mAI Chat: Executing tool "search_directory" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-03 00:24:34:2434] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-03 00:24:56:2456] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-03 00:24:58:2458] [[32minfo[39m]: [32mAI Chat: Executing tool "get_my_flat" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-03 00:24:58:2458] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-03 01:05:30:530] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 1[39m
+[2026-07-03 01:05:34:534] [[32minfo[39m]: [32mAI Chat: Executing tool "get_my_profile" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-03 01:05:34:534] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 2[39m
+[2026-07-03 01:05:39:539] [[32minfo[39m]: [32mAI Chat: Executing tool "search_directory" for tenant 66fd858a-b5b3-4910-bb40-3a843a5e3e6a, user 15a40e8f-0114-42b1-b321-2f563d8fa8db[39m
+[2026-07-03 01:05:39:539] [[32minfo[39m]: [32mAI Chat: Gemini API POST Turn 3[39m
+[2026-07-03 01:05:39:539] [[31merror[39m]: [31mAI Chat completion failed: Gemini API error: 429 - {[39m
+[31m  "error": {[39m
+[31m    "code": 429,[39m
+[31m    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 19.958229463s.",[39m
+[31m    "status": "RESOURCE_EXHAUSTED",[39m
+[31m    "details": [[39m
+[31m      {[39m
+[31m        "@type": "type.googleapis.com/google.rpc.Help",[39m
+[31m        "links": [[39m
+[31m          {[39m
+[31m            "description": "Learn more about Gemini API quotas",[39m
+[31m            "url": "https://ai.google.dev/gemini-api/docs/rate-limits"[39m
+[31m          }[39m
+[31m        ][39m
+[31m      },[39m
+[31m      {[39m
+[31m        "@type": "type.googleapis.com/google.rpc.QuotaFailure",[39m
+[31m        "violations": [[39m
+[31m          {[39m
+[31m            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",[39m
+[31m            "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",[39m
+[31m            "quotaDimensions": {[39m
+[31m              "model": "gemini-2.5-flash",[39m
+[31m              "location": "global"[39m
+[31m            },[39m
+[31m            "quotaValue": "20"[39m
+[31m          }[39m
+[31m        ][39m
+[31m      },[39m
+[31m      {[39m
+[31m        "@type": "type.googleapis.com/google.rpc.RetryInfo",[39m
+[31m        "retryDelay": "19s"[39m
+[31m      }[39m
+[31m    ][39m
+[31m  }[39m
+[31m}[39m
+[31m[39m

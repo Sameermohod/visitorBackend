@@ -118,7 +118,10 @@ class VisitorController {
     static async verifyPass(req, res, next) {
         try {
             const tenantId = req.tenantId;
-            const qrCode = req.query.qrCode;
+            let qrCode = req.query.qrCode;
+            if (qrCode) {
+                qrCode = qrCode.trim();
+            }
             if (!qrCode) {
                 return apiResponse_1.default.error(res, 'Missing QR code query parameter', null, 400);
             }

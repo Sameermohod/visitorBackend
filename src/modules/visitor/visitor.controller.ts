@@ -196,7 +196,7 @@ export class VisitorController {
 
       // Execute Stored Procedure
       await prisma.$executeRawUnsafe(
-        `CALL procedure_log_visitor_entry($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text, NULL)`,
+        `CALL procedure_log_visitor_entry($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text, NULL::uuid)`,
         tenantId,
         visitorId,
         flatId,

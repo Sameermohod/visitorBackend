@@ -175,7 +175,7 @@ class VisitorController {
             }
             logger_1.default.info(`Visitor: Executing CALL procedure_log_visitor_entry on DB for tenant: ${tenantId}`);
             // Execute Stored Procedure
-            await db_1.default.$executeRawUnsafe(`CALL procedure_log_visitor_entry($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text, NULL)`, tenantId, visitorId, flatId, guardUserId, notes);
+            await db_1.default.$executeRawUnsafe(`CALL procedure_log_visitor_entry($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text, NULL::uuid)`, tenantId, visitorId, flatId, guardUserId, notes);
             // Fetch the newly logged entry to return to client
             const latestLog = await db_1.default.visitorLog.findFirst({
                 where: { tenantId, visitorId, flatId },

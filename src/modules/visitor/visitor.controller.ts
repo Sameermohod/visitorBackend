@@ -18,7 +18,10 @@ const preApproveSchema = z.object({
 
 const guardCheckInSchema = z.object({
   visitorId: z.string().uuid(),
-  flatId: z.string().uuid(),
+  flatId: z.preprocess(
+    (val) => (typeof val === 'string' && val.length === 36 ? val : undefined),
+    z.string().uuid().optional()
+  ),
   notes: z.string().optional().default('Checked in at main gate'),
 });
 
@@ -172,7 +175,22 @@ export class VisitorController {
     try {
       const tenantId = req.tenantId!;
       const guardUserId = req.user!.id;
-      const { visitorId, flatId, notes } = guardCheckInSchema.parse(req.body);
+      let { visitorId, flatId, notes } = guardCheckInSchema.parse(req.body);
+
+      // Automatically resolve flatId from database if not provided/invalid
+      if (!flatId) {
+        const visitor = await prisma.visitor.findFirst({
+          where: { id: visitorId, tenantId },
+          include: {
+            resident: true,
+          },
+        });
+        if (visitor && visitor.resident && visitor.resident.flatId) {
+          flatId = visitor.resident.flatId;
+        } else {
+          return ApiResponse.error(res, 'Target resident flat details could not be resolved for this visitor. Please specify a valid flatId UUID.', null, 400);
+        }
+      }
 
       logger.info(`Visitor: Executing CALL procedure_log_visitor_entry on DB for tenant: ${tenantId}`);
 

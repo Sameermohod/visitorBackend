@@ -21,7 +21,7 @@ const preApproveSchema = zod_1.z.object({
 });
 const guardCheckInSchema = zod_1.z.object({
     visitorId: zod_1.z.string().uuid(),
-    flatId: zod_1.z.string().uuid(),
+    flatId: zod_1.z.preprocess((val) => (typeof val === 'string' && val.length === 36 ? val : undefined), zod_1.z.string().uuid().optional()),
     notes: zod_1.z.string().optional().default('Checked in at main gate'),
 });
 const faceEnrollSchema = zod_1.z.object({
@@ -157,7 +157,22 @@ class VisitorController {
         try {
             const tenantId = req.tenantId;
             const guardUserId = req.user.id;
-            const { visitorId, flatId, notes } = guardCheckInSchema.parse(req.body);
+            let { visitorId, flatId, notes } = guardCheckInSchema.parse(req.body);
+            // Automatically resolve flatId from database if not provided/invalid
+            if (!flatId) {
+                const visitor = await db_1.default.visitor.findFirst({
+                    where: { id: visitorId, tenantId },
+                    include: {
+                        resident: true,
+                    },
+                });
+                if (visitor && visitor.resident && visitor.resident.flatId) {
+                    flatId = visitor.resident.flatId;
+                }
+                else {
+                    return apiResponse_1.default.error(res, 'Target resident flat details could not be resolved for this visitor. Please specify a valid flatId UUID.', null, 400);
+                }
+            }
             logger_1.default.info(`Visitor: Executing CALL procedure_log_visitor_entry on DB for tenant: ${tenantId}`);
             // Execute Stored Procedure
             await db_1.default.$executeRawUnsafe(`CALL procedure_log_visitor_entry($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text, NULL)`, tenantId, visitorId, flatId, guardUserId, notes);

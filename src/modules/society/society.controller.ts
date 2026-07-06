@@ -151,6 +151,12 @@ export class SocietyController {
               building: true,
             },
           },
+          residents: {
+            where: { deletedAt: null },
+            include: {
+              user: true,
+            },
+          },
         },
       });
 

@@ -55,6 +55,12 @@ router.post(
   VisitorController.checkIn
 );
 
+router.post(
+  '/manual-entry',
+  checkPermission('visitors:gate'),
+  VisitorController.manualEntry
+);
+
 /**
  * @swagger
  * /api/v1/visitors/check-out/:logId:

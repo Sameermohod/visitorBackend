@@ -30,7 +30,96 @@ const faceEnrollSchema = z.object({
   faceImageBase64: z.string().min(100), // Enrolls base64 face vector
 });
 
+const manualEntrySchema = z.object({
+  name: z.string().min(1),
+  phoneNumber: z.string().min(10),
+  visitorType: z.enum(['GUEST', 'DELIVERY', 'CAB']),
+  company: z.string().optional(),
+  vehicleNumber: z.string().optional(),
+  flatId: z.string().uuid(),
+  purpose: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 export class VisitorController {
+  // Guard Walk-in Manual Entry check-in
+  static async manualEntry(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tenantId = req.tenantId!;
+      const guardId = req.user!.id;
+      const data = manualEntrySchema.parse(req.body);
+
+      const result = await prisma.$transaction(async (tx) => {
+        // 1. Create a Visitor record marked as APPROVED
+        const visitor = await tx.visitor.create({
+          data: {
+            tenantId,
+            name: data.name,
+            phoneNumber: data.phoneNumber,
+            visitorType: data.visitorType,
+            company: data.company,
+            vehicleNumber: data.vehicleNumber,
+            purpose: data.purpose || 'Manual Entry by Guard',
+            status: 'APPROVED',
+          },
+        });
+
+        // 2. Create the VisitorLog entry immediately
+        const log = await tx.visitorLog.create({
+          data: {
+            tenantId,
+            visitorId: visitor.id,
+            flatId: data.flatId,
+            checkedInBy: guardId,
+            notes: data.notes || 'Manual walk-in check-in completed at gate',
+          },
+        });
+
+        return { visitor, log };
+      });
+
+      // Fetch the full log to return to client
+      const fullLog = await prisma.visitorLog.findUnique({
+        where: { id: result.log.id },
+        include: { visitor: true, flat: true },
+      });
+
+      // Asynchronously fetch occupants and notify them via SMTP email alerts
+      prisma.resident.findMany({
+        where: { flatId: data.flatId, tenantId, deletedAt: null },
+        include: {
+          user: true,
+          flat: true,
+        },
+      }).then((flatOccupants) => {
+        if (flatOccupants && flatOccupants.length > 0 && fullLog) {
+          const flatNumber = flatOccupants[0].flat?.number || 'your flat';
+          for (const occ of flatOccupants) {
+            if (occ.user && occ.user.email) {
+              sendEmail(
+                occ.user.email,
+                `🚨 Gate Security: Manual Visitor Checked In at Main Entrance`,
+                getVisitorGateAlertTemplate(
+                  fullLog.visitor.name,
+                  fullLog.visitor.visitorType,
+                  fullLog.visitor.vehicleNumber,
+                  fullLog.visitor.purpose,
+                  flatNumber,
+                  new Date().toLocaleString()
+                )
+              ).catch((err) => logger.error(`SMTP: Failed to notify resident ${occ.user.email} of manual visitor check-in:`, err));
+            }
+          }
+        }
+      }).catch((err) => logger.error('SMTP: Failed to query flat occupants for manual visitor alert:', err));
+
+      logger.info(`Guard: Manual visitor entry created for ${data.name} to flat ${data.flatId}`);
+      return ApiResponse.success(res, fullLog, 'Manual entry check-in completed successfully.', 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Pre-approve guest (Resident only)
   static async preApprove(req: Request, res: Response, next: NextFunction) {
     try {

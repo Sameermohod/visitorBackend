@@ -134,6 +134,12 @@ class SocietyController {
                             building: true,
                         },
                     },
+                    residents: {
+                        where: { deletedAt: null },
+                        include: {
+                            user: true,
+                        },
+                    },
                 },
             });
             return apiResponse_1.default.success(res, flats, 'Flats fetched successfully');

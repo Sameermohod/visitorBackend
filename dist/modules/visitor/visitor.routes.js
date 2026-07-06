@@ -34,6 +34,7 @@ router.get('/verify-pass', (0, auth_1.checkPermission)('visitors:gate'), visitor
  *     summary: Guard executes log entry via DB procedures
  */
 router.post('/check-in', (0, auth_1.checkPermission)('visitors:gate'), visitor_controller_1.VisitorController.checkIn);
+router.post('/manual-entry', (0, auth_1.checkPermission)('visitors:gate'), visitor_controller_1.VisitorController.manualEntry);
 /**
  * @swagger
  * /api/v1/visitors/check-out/:logId:

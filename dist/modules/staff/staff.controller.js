@@ -134,6 +134,29 @@ class StaffController {
             next(error);
         }
     }
+    // Toggle staff active/inactive state
+    static async toggleActive(req, res, next) {
+        try {
+            const tenantId = req.tenantId;
+            const staffId = req.params.staffId;
+            const { isActive } = zod_1.z.object({ isActive: zod_1.z.boolean() }).parse(req.body);
+            const staff = await db_1.default.staff.findFirst({
+                where: { id: staffId, tenantId, deletedAt: null },
+            });
+            if (!staff) {
+                return apiResponse_1.default.error(res, 'Staff member not found.', null, 404);
+            }
+            const updated = await db_1.default.staff.update({
+                where: { id: staffId },
+                data: { isActive },
+            });
+            logger_1.default.info(`Staff: Toggled staff ${staff.firstName} ${staff.lastName} active status to: ${isActive}`);
+            return apiResponse_1.default.success(res, updated, `Staff status successfully updated to ${isActive ? 'Active' : 'Inactive'}`);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 exports.StaffController = StaffController;
 exports.default = StaffController;

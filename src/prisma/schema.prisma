@@ -319,6 +319,7 @@ model Staff {
   createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime          @default(now()) @map("updated_at") @db.Timestamptz
   deletedAt     DateTime?         @map("deleted_at") @db.Timestamptz
+  isActive      Boolean           @default(true) @map("is_active")
 
   tenant        Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user          User?             @relation("StaffUser", fields: [userId], references: [id], onDelete: SetNull)

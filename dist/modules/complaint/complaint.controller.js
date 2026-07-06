@@ -135,7 +135,7 @@ class ComplaintController {
                 },
                 include: {
                     resident: {
-                        select: { firstName: true, lastName: true, email: true },
+                        select: { firstName: true, lastName: true, email: true, phoneNumber: true },
                     },
                     staff: true,
                     comments: {

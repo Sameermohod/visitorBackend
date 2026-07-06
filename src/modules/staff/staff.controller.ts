@@ -154,5 +154,32 @@ export class StaffController {
       next(error);
     }
   }
+
+  // Toggle staff active/inactive state
+  static async toggleActive(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tenantId = req.tenantId!;
+      const staffId = req.params.staffId;
+      const { isActive } = z.object({ isActive: z.boolean() }).parse(req.body);
+
+      const staff = await prisma.staff.findFirst({
+        where: { id: staffId, tenantId, deletedAt: null },
+      });
+
+      if (!staff) {
+        return ApiResponse.error(res, 'Staff member not found.', null, 404);
+      }
+
+      const updated = await prisma.staff.update({
+        where: { id: staffId },
+        data: { isActive },
+      });
+
+      logger.info(`Staff: Toggled staff ${staff.firstName} ${staff.lastName} active status to: ${isActive}`);
+      return ApiResponse.success(res, updated, `Staff status successfully updated to ${isActive ? 'Active' : 'Inactive'}`);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default StaffController;

@@ -39,4 +39,10 @@ router.post(
   StaffController.onboard
 );
 
+router.patch(
+  '/:staffId/status',
+  checkPermission('staff:manage'),
+  StaffController.toggleActive
+);
+
 export default router;

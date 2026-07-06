@@ -77,8 +77,11 @@ export class AnalyticsController {
         }, 'Society admin analytics loaded');
       }
 
-      // 3. Guard / Staff View (Single-Tenant Staff Details)
-      if (userRole === 'Security Guard' || userRole === 'Maintenance Staff') {
+      // 3. Supervisor View (Staff coordination dashboard)
+      if (userRole === 'Supervisor') {
+        const totalResidents = await prisma.resident.count({ where: { tenantId, deletedAt: null } });
+        const totalGuards = await prisma.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } });
+        const openComplaints = await prisma.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } });
         const visitorsToday = await prisma.visitorLog.count({
           where: {
             tenantId,
@@ -87,20 +90,62 @@ export class AnalyticsController {
             },
           },
         });
-        const openComplaintsCount = await prisma.complaint.count({
-          where: { tenantId, status: 'OPEN', deletedAt: null },
+
+        return ApiResponse.success(res, {
+          view: 'SUPERVISOR',
+          stats: {
+            residentsCount: totalResidents,
+            guardsCount: totalGuards,
+            openComplaints,
+            visitorsTodayCount: visitorsToday,
+          },
+        }, 'Supervisor dashboard analytics loaded');
+      }
+
+      // 4. Guard View (Security details)
+      if (userRole === 'Security Guard') {
+        const visitorsToday = await prisma.visitorLog.count({
+          where: {
+            tenantId,
+            checkedInAt: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            },
+          },
         });
 
         return ApiResponse.success(res, {
-          view: userRole === 'Security Guard' ? 'GUARD' : 'STAFF',
+          view: 'GUARD',
           stats: {
             visitorsTodayCount: visitorsToday,
-            openComplaints: openComplaintsCount,
+          },
+        }, 'Guard dashboard analytics loaded');
+      }
+
+      // 5. Staff View (Plumber, Electrician, Cleaner, Maintenance Staff)
+      if (
+        userRole === 'Plumber' ||
+        userRole === 'Electrician' ||
+        userRole === 'Cleaner' ||
+        userRole === 'Maintenance Staff'
+      ) {
+        const myOpenComplaints = await prisma.complaint.count({
+          where: {
+            tenantId,
+            assignedTo: req.user!.id,
+            status: { in: ['OPEN', 'IN_PROGRESS'] },
+            deletedAt: null,
+          },
+        });
+
+        return ApiResponse.success(res, {
+          view: 'STAFF',
+          stats: {
+            myOpenComplaints,
           },
         }, 'Staff dashboard analytics loaded');
       }
 
-      // 4. Resident View (Personalized flat details)
+      // 6. Resident View (Personalized flat details)
       const resident = await prisma.resident.findFirst({
         where: { userId: req.user!.id, tenantId, deletedAt: null },
         include: { flat: true },

@@ -28,4 +28,5 @@ router.get('/directory', (req, res, next) => {
  *     summary: Onboard and register new staff member or guard
  */
 router.post('/onboard', (0, auth_1.checkPermission)('staff:manage'), staff_controller_1.StaffController.onboard);
+router.patch('/:staffId/status', (0, auth_1.checkPermission)('staff:manage'), staff_controller_1.StaffController.toggleActive);
 exports.default = router;

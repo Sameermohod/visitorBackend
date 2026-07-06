@@ -91,4 +91,10 @@ router.post(
   VisitorController.enrollFace
 );
 
+router.delete(
+  '/:passId',
+  checkPermission('visitors:create'),
+  VisitorController.deletePass
+);
+
 export default router;

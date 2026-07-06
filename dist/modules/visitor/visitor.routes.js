@@ -55,4 +55,5 @@ router.get('/logs', (0, auth_1.checkPermission)('visitors:view'), visitor_contro
  *     summary: Enrolls biometric data
  */
 router.post('/face-enroll', (0, auth_1.checkPermission)('visitors:create'), visitor_controller_1.VisitorController.enrollFace);
+router.delete('/:passId', (0, auth_1.checkPermission)('visitors:create'), visitor_controller_1.VisitorController.deletePass);
 exports.default = router;

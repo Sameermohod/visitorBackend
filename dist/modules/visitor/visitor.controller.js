@@ -257,6 +257,43 @@ class VisitorController {
             next(error);
         }
     }
+    // Delete pre-approved pass (Resident only can delete their own passes)
+    static async deletePass(req, res, next) {
+        try {
+            const tenantId = req.tenantId;
+            const passId = req.params.passId;
+            const userRole = req.user.role;
+            const userId = req.user.id;
+            if (userRole === 'Resident') {
+                const resident = await db_1.default.resident.findFirst({
+                    where: { userId, tenantId, deletedAt: null },
+                });
+                if (!resident) {
+                    return apiResponse_1.default.error(res, 'Resident profile not found', null, 404);
+                }
+                const visitor = await db_1.default.visitor.findFirst({
+                    where: { id: passId, tenantId },
+                });
+                if (!visitor) {
+                    return apiResponse_1.default.error(res, 'Visitor pass not found', null, 404);
+                }
+                if (visitor.preApprovedBy !== resident.id) {
+                    return apiResponse_1.default.error(res, 'Access denied: you can only delete passes created by you.', null, 403);
+                }
+            }
+            else if (userRole !== 'Society Admin' && userRole !== 'Super Admin') {
+                return apiResponse_1.default.error(res, 'Access denied: unauthorized.', null, 403);
+            }
+            // Delete the visitor pass
+            await db_1.default.visitor.delete({
+                where: { id: passId },
+            });
+            return apiResponse_1.default.success(res, null, 'Visitor pass deleted successfully');
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 exports.VisitorController = VisitorController;
 exports.default = VisitorController;

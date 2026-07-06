@@ -304,5 +304,47 @@ export class VisitorController {
       next(error);
     }
   }
+
+  // Delete pre-approved pass (Resident only can delete their own passes)
+  static async deletePass(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tenantId = req.tenantId!;
+      const passId = req.params.passId;
+      const userRole = req.user!.role;
+      const userId = req.user!.id;
+
+      if (userRole === 'Resident') {
+        const resident = await prisma.resident.findFirst({
+          where: { userId, tenantId, deletedAt: null },
+        });
+        if (!resident) {
+          return ApiResponse.error(res, 'Resident profile not found', null, 404);
+        }
+
+        const visitor = await prisma.visitor.findFirst({
+          where: { id: passId, tenantId },
+        });
+
+        if (!visitor) {
+          return ApiResponse.error(res, 'Visitor pass not found', null, 404);
+        }
+
+        if (visitor.preApprovedBy !== resident.id) {
+          return ApiResponse.error(res, 'Access denied: you can only delete passes created by you.', null, 403);
+        }
+      } else if (userRole !== 'Society Admin' && userRole !== 'Super Admin') {
+        return ApiResponse.error(res, 'Access denied: unauthorized.', null, 403);
+      }
+
+      // Delete the visitor pass
+      await prisma.visitor.delete({
+        where: { id: passId },
+      });
+
+      return ApiResponse.success(res, null, 'Visitor pass deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default VisitorController;

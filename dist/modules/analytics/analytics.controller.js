@@ -71,7 +71,28 @@ class AnalyticsController {
                     },
                 }, 'Society admin analytics loaded');
             }
-            // 3. Resident View (Personalized flat details)
+            // 3. Guard / Staff View (Single-Tenant Staff Details)
+            if (userRole === 'Security Guard' || userRole === 'Maintenance Staff') {
+                const visitorsToday = await db_1.default.visitorLog.count({
+                    where: {
+                        tenantId,
+                        checkedInAt: {
+                            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                        },
+                    },
+                });
+                const openComplaintsCount = await db_1.default.complaint.count({
+                    where: { tenantId, status: 'OPEN', deletedAt: null },
+                });
+                return apiResponse_1.default.success(res, {
+                    view: userRole === 'Security Guard' ? 'GUARD' : 'STAFF',
+                    stats: {
+                        visitorsTodayCount: visitorsToday,
+                        openComplaints: openComplaintsCount,
+                    },
+                }, 'Staff dashboard analytics loaded');
+            }
+            // 4. Resident View (Personalized flat details)
             const resident = await db_1.default.resident.findFirst({
                 where: { userId: req.user.id, tenantId, deletedAt: null },
                 include: { flat: true },

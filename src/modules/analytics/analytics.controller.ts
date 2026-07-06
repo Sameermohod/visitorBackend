@@ -77,7 +77,30 @@ export class AnalyticsController {
         }, 'Society admin analytics loaded');
       }
 
-      // 3. Resident View (Personalized flat details)
+      // 3. Guard / Staff View (Single-Tenant Staff Details)
+      if (userRole === 'Security Guard' || userRole === 'Maintenance Staff') {
+        const visitorsToday = await prisma.visitorLog.count({
+          where: {
+            tenantId,
+            checkedInAt: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            },
+          },
+        });
+        const openComplaintsCount = await prisma.complaint.count({
+          where: { tenantId, status: 'OPEN', deletedAt: null },
+        });
+
+        return ApiResponse.success(res, {
+          view: userRole === 'Security Guard' ? 'GUARD' : 'STAFF',
+          stats: {
+            visitorsTodayCount: visitorsToday,
+            openComplaints: openComplaintsCount,
+          },
+        }, 'Staff dashboard analytics loaded');
+      }
+
+      // 4. Resident View (Personalized flat details)
       const resident = await prisma.resident.findFirst({
         where: { userId: req.user!.id, tenantId, deletedAt: null },
         include: { flat: true },

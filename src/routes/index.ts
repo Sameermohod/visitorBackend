@@ -9,6 +9,7 @@ import noticeRouter from '../modules/notice/notice.routes';
 import analyticsRouter from '../modules/analytics/analytics.routes';
 import staffRouter from '../modules/staff/staff.routes';
 import chatRouter from '../modules/chat/chat.routes';
+import superAdminRouter from '../modules/super-admin/super-admin.routes';
 import ApiResponse from '../utils/apiResponse';
 
 const router = Router();
@@ -29,5 +30,6 @@ router.use('/notices', noticeRouter);
 router.use('/analytics', analyticsRouter);
 router.use('/staff', staffRouter);
 router.use('/chat', chatRouter);
+router.use('/super-admin', superAdminRouter);
 
 export default router;

@@ -7,6 +7,7 @@ exports.NoticeController = void 0;
 const zod_1 = require("zod");
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
+const emailService_1 = require("../../utils/emailService");
 const noticeSchema = zod_1.z.object({
     title: zod_1.z.string().min(3),
     content: zod_1.z.string().min(10),
@@ -28,6 +29,23 @@ class NoticeController {
                     visibility: data.visibility,
                     createdBy: userId,
                 },
+            });
+            // Fetch tenant details
+            const tenant = await db_1.default.tenant.findUnique({
+                where: { id: tenantId }
+            });
+            // Fetch all onboarded residents to notify them
+            const residents = await db_1.default.resident.findMany({
+                where: { tenantId, deletedAt: null },
+                include: { user: true }
+            });
+            // Send notice email notification to all residents
+            residents.forEach((r) => {
+                if (r.user?.email) {
+                    (0, emailService_1.sendEmail)(r.user.email, `📢 New Notice: ${notice.title} - ${tenant?.name || 'Society Board'}`, (0, emailService_1.getNoticePublishedTemplate)(r.user.firstName, notice.title, notice.content, notice.category || 'GENERAL', tenant?.name || 'Society Board')).catch((err) => {
+                        console.error(`Failed to send notice email to ${r.user.email}:`, err);
+                    });
+                }
             });
             return apiResponse_1.default.success(res, notice, 'Notice published successfully', 201);
         }

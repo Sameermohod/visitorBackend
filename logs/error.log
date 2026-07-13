@@ -261,3 +261,14 @@
 [31m  }[39m
 [31m}[39m
 [31m[39m
+[2026-07-13 15:42:17:4217] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mE:\New folder (3)\visitormanagement\backend\src\middleware\tenant.ts:53:36[39m
+
+[31m  50     where: { id: tenantId, deletedAt: null },[39m
+[31m  51   });[39m
+[31m  52 } else if (tenantSlug) {[39m
+[31m→ 53   tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `ep-plain-scene-ahegfx1h-pooler.c-3.us-east-1.aws.neon.tech:5432`[39m
+
+[31mPlease make sure your database server is running at `ep-plain-scene-ahegfx1h-pooler.c-3.us-east-1.aws.neon.tech:5432`.[39m

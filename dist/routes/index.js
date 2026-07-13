@@ -14,6 +14,7 @@ const notice_routes_1 = __importDefault(require("../modules/notice/notice.routes
 const analytics_routes_1 = __importDefault(require("../modules/analytics/analytics.routes"));
 const staff_routes_1 = __importDefault(require("../modules/staff/staff.routes"));
 const chat_routes_1 = __importDefault(require("../modules/chat/chat.routes"));
+const super_admin_routes_1 = __importDefault(require("../modules/super-admin/super-admin.routes"));
 const apiResponse_1 = __importDefault(require("../utils/apiResponse"));
 const router = (0, express_1.Router)();
 // Version 1 Health Check
@@ -31,4 +32,5 @@ router.use('/notices', notice_routes_1.default);
 router.use('/analytics', analytics_routes_1.default);
 router.use('/staff', staff_routes_1.default);
 router.use('/chat', chat_routes_1.default);
+router.use('/super-admin', super_admin_routes_1.default);
 exports.default = router;

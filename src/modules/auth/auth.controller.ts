@@ -35,27 +35,10 @@ export class AuthController {
     try {
       const { email, password, tenantSlug } = loginSchema.parse(req.body);
 
-      let tenantId: string | null = null;
-
-      // Resolve tenant if slug provided
-      if (tenantSlug) {
-        const tenant = await prisma.tenant.findUnique({
-          where: { slug: tenantSlug, deletedAt: null },
-        });
-        if (!tenant) {
-          return ApiResponse.error(res, 'Society not registered or invalid slug.', null, 400);
-        }
-        if (!tenant.isActive) {
-          return ApiResponse.error(res, 'This society space is suspended.', null, 403);
-        }
-        tenantId = tenant.id;
-      }
-
-      // Query User
+      // Query User globally by email first to find their tenant context automatically
       const user = await prisma.user.findFirst({
         where: {
           email,
-          tenantId,
           deletedAt: null,
         },
         include: {
@@ -65,7 +48,14 @@ export class AuthController {
       });
 
       if (!user) {
-        return ApiResponse.error(res, 'Invalid credentials or tenant mismatch.', null, 401);
+        return ApiResponse.error(res, 'Invalid credentials.', null, 401);
+      }
+
+      // If user belongs to a tenant, verify if tenant is active
+      if (user.tenant) {
+        if (!user.tenant.isActive) {
+          return ApiResponse.error(res, 'This society space is suspended. Please contact Super Admin.', null, 403);
+        }
       }
 
       const isMatch = await bcrypt.compare(password, user.passwordHash);

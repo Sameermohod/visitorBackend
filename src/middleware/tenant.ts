@@ -27,6 +27,7 @@ export const tenantResolver = async (
     '/api/v1/auth/refresh',
     '/api/v1/auth/super-login',
     '/api/v1/health',
+    '/api/v1/super-admin',
     '/api-docs'
   ];
 

@@ -8,6 +8,7 @@ const zod_1 = require("zod");
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
 const logger_1 = __importDefault(require("../../configs/logger"));
+const emailService_1 = require("../../utils/emailService");
 const generateBillSchema = zod_1.z.object({
     periodStart: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // "YYYY-MM-DD"
     periodEnd: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -31,6 +32,31 @@ class BillingController {
             // Verify generated count
             const generated = await db_1.default.maintenanceInvoice.count({
                 where: { tenantId, billPeriodStart: new Date(data.periodStart) },
+            });
+            // Query generated invoices to trigger emails to residents
+            const invoices = await db_1.default.maintenanceInvoice.findMany({
+                where: { tenantId, billPeriodStart: new Date(data.periodStart), deletedAt: null },
+                include: {
+                    flat: {
+                        include: {
+                            residents: {
+                                where: { deletedAt: null },
+                                include: { user: true }
+                            }
+                        }
+                    }
+                }
+            });
+            // Trigger email notifications
+            invoices.forEach((inv) => {
+                const residents = inv.flat?.residents || [];
+                residents.forEach((resOccupant) => {
+                    if (resOccupant.user?.email) {
+                        (0, emailService_1.sendEmail)(resOccupant.user.email, `📄 New Maintenance Bill: Invoice ${inv.invoiceNumber} - ₹${inv.totalAmount}`, (0, emailService_1.getInvoiceGeneratedTemplate)(resOccupant.user.firstName, inv.invoiceNumber || 'N/A', Number(inv.totalAmount), inv.dueDate.toISOString().split('T')[0], `${data.periodStart} to ${data.periodEnd}`)).catch((err) => {
+                            console.error(`Failed to send invoice email to ${resOccupant.user.email}:`, err);
+                        });
+                    }
+                });
             });
             return apiResponse_1.default.success(res, { generatedCount: generated }, `Invoices generated successfully via DB stored procedure. Total: ${generated}`);
         }
@@ -114,6 +140,13 @@ class BillingController {
                 });
                 return { invoice: updatedInvoice, payment };
             });
+            // Send payment success confirmation email
+            const payUser = req.user;
+            if (payUser && payUser.email) {
+                (0, emailService_1.sendEmail)(payUser.email, `✅ Payment Confirmation: Invoice ${invoice.invoiceNumber} - ₹${data.amount}`, (0, emailService_1.getPaymentSuccessTemplate)(payUser.firstName, invoice.invoiceNumber || 'N/A', data.amount, result.payment.transactionId, result.payment.paymentReceiptUrl || '')).catch((err) => {
+                    console.error(`Failed to send payment receipt to ${payUser.email}:`, err);
+                });
+            }
             return apiResponse_1.default.success(res, result, 'Payment simulated successfully. Receipt logged.', 201);
         }
         catch (error) {

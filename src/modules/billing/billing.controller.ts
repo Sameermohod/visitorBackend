@@ -3,6 +3,7 @@ import { z } from 'zod';
 import prisma from '../../configs/db';
 import ApiResponse from '../../utils/apiResponse';
 import logger from '../../configs/logger';
+import { sendEmail, getInvoiceGeneratedTemplate, getPaymentSuccessTemplate } from '../../utils/emailService';
 
 const generateBillSchema = z.object({
   periodStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // "YYYY-MM-DD"
@@ -39,6 +40,43 @@ export class BillingController {
       // Verify generated count
       const generated = await prisma.maintenanceInvoice.count({
         where: { tenantId, billPeriodStart: new Date(data.periodStart) },
+      });
+
+      // Query generated invoices to trigger emails to residents
+      const invoices = await prisma.maintenanceInvoice.findMany({
+        where: { tenantId, billPeriodStart: new Date(data.periodStart), deletedAt: null },
+        include: {
+          flat: {
+            include: {
+              residents: {
+                where: { deletedAt: null },
+                include: { user: true }
+              }
+            }
+          }
+        }
+      });
+
+      // Trigger email notifications
+      invoices.forEach((inv) => {
+        const residents = inv.flat?.residents || [];
+        residents.forEach((resOccupant) => {
+          if (resOccupant.user?.email) {
+            sendEmail(
+              resOccupant.user.email,
+              `📄 New Maintenance Bill: Invoice ${inv.invoiceNumber} - ₹${inv.totalAmount}`,
+              getInvoiceGeneratedTemplate(
+                resOccupant.user.firstName,
+                inv.invoiceNumber || 'N/A',
+                Number(inv.totalAmount),
+                inv.dueDate.toISOString().split('T')[0],
+                `${data.periodStart} to ${data.periodEnd}`
+              )
+            ).catch((err) => {
+              console.error(`Failed to send invoice email to ${resOccupant.user.email}:`, err);
+            });
+          }
+        });
       });
 
       return ApiResponse.success(
@@ -138,6 +176,24 @@ export class BillingController {
 
         return { invoice: updatedInvoice, payment };
       });
+
+      // Send payment success confirmation email
+      const payUser = req.user!;
+      if (payUser && payUser.email) {
+        sendEmail(
+          payUser.email,
+          `✅ Payment Confirmation: Invoice ${invoice.invoiceNumber} - ₹${data.amount}`,
+          getPaymentSuccessTemplate(
+            payUser.firstName,
+            invoice.invoiceNumber || 'N/A',
+            data.amount,
+            result.payment.transactionId,
+            result.payment.paymentReceiptUrl || ''
+          )
+        ).catch((err) => {
+          console.error(`Failed to send payment receipt to ${payUser.email}:`, err);
+        });
+      }
 
       return ApiResponse.success(res, result, 'Payment simulated successfully. Receipt logged.', 201);
     } catch (error) {

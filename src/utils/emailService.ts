@@ -187,3 +187,83 @@ export const getComplaintUpdateTemplate = (
   </div>
   `;
 };
+
+/**
+ * 6. New Invoice Generated Notification Template
+ */
+export const getInvoiceGeneratedTemplate = (
+  recipientName: string,
+  invoiceNumber: string,
+  amount: number,
+  dueDate: string,
+  billingPeriod: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.05);">
+    <h2 style="color: #f59e0b; margin-bottom: 20px; text-align: center;">📄 New Maintenance Invoice Raised</h2>
+    <p>Dear ${recipientName},</p>
+    <p>This is to inform you that a new monthly maintenance invoice has been generated for your flat:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Invoice Number:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace;"><strong>${invoiceNumber}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Billing Period:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${billingPeriod}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Total Amount Due:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>₹${amount}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Payment Due Date:</strong></td><td style="padding: 10px; color: #f43f5e;"><strong>${dueDate}</strong></td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">Please log in to your SaaS Society portal to pay this invoice online via UPI or other payment methods to avoid late fees.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Billing & Accounts Dept.</p>
+  </div>
+  `;
+};
+
+/**
+ * 7. Payment Confirmation Receipt Template
+ */
+export const getPaymentSuccessTemplate = (
+  recipientName: string,
+  invoiceNumber: string,
+  amountPaid: number,
+  transactionId: string,
+  receiptUrl: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.05);">
+    <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">✅ Payment Received - Thank You</h2>
+    <p>Dear ${recipientName},</p>
+    <p>Thank you for your payment. We have successfully processed your monthly maintenance payment:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Invoice Number:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05);">${invoiceNumber}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Amount Paid:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>₹${amountPaid}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Transaction ID:</strong></td><td style="padding: 10px; color: #cbd5e1; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace;"><strong>${transactionId}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Payment Status:</strong></td><td style="padding: 10px; color: #10b981;"><strong>SUCCESS</strong></td></tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">You can download your digital payment receipt here: <a href="${receiptUrl}" style="color: #06b6d4; text-decoration: underline;" target="_blank">Download PDF Receipt</a></p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Billing & Accounts Dept.</p>
+  </div>
+  `;
+};
+
+/**
+ * 8. Notice Published Template
+ */
+export const getNoticePublishedTemplate = (
+  recipientName: string,
+  noticeTitle: string,
+  noticeContent: string,
+  category: string,
+  societyName: string
+): string => {
+  return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.05);">
+    <h2 style="color: #06b6d4; margin-bottom: 20px; text-align: center;">📢 Notice Board Bulletin</h2>
+    <p>Dear ${recipientName},</p>
+    <p>A new notice has been published on the bulletin board for <strong>${societyName}</strong>:</p>
+    <div style="margin-top: 15px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #06b6d4;">
+      <span style="font-size: 10px; font-weight: bold; color: #06b6d4; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 5px;">${category}</span>
+      <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 10px;">${noticeTitle}</h3>
+      <p style="font-size: 13px; line-height: 1.6; color: #cbd5e1; white-space: pre-wrap; margin: 0;">${noticeContent}</p>
+    </div>
+    <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">Log in to your SaaS Society portal to view the full Notice Board history.</p>
+    <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Administration</p>
+  </div>
+  `;
+};

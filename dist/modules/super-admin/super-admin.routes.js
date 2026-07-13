@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const super_admin_controller_1 = require("./super-admin.controller");
+const auth_1 = require("../../middleware/auth");
+const router = (0, express_1.Router)();
+router.use(auth_1.authenticate);
+router.patch('/tenants/:id/status', super_admin_controller_1.SuperAdminController.toggleTenantStatus);
+router.delete('/tenants/:id', super_admin_controller_1.SuperAdminController.deleteTenant);
+router.get('/data', super_admin_controller_1.SuperAdminController.getGlobalData);
+router.delete('/users/:id', super_admin_controller_1.SuperAdminController.deleteUser);
+router.delete('/staff/:id', super_admin_controller_1.SuperAdminController.deleteStaff);
+exports.default = router;

@@ -35,25 +35,10 @@ class AuthController {
     static async login(req, res, next) {
         try {
             const { email, password, tenantSlug } = loginSchema.parse(req.body);
-            let tenantId = null;
-            // Resolve tenant if slug provided
-            if (tenantSlug) {
-                const tenant = await db_1.default.tenant.findUnique({
-                    where: { slug: tenantSlug, deletedAt: null },
-                });
-                if (!tenant) {
-                    return apiResponse_1.default.error(res, 'Society not registered or invalid slug.', null, 400);
-                }
-                if (!tenant.isActive) {
-                    return apiResponse_1.default.error(res, 'This society space is suspended.', null, 403);
-                }
-                tenantId = tenant.id;
-            }
-            // Query User
+            // Query User globally by email first to find their tenant context automatically
             const user = await db_1.default.user.findFirst({
                 where: {
                     email,
-                    tenantId,
                     deletedAt: null,
                 },
                 include: {
@@ -62,7 +47,13 @@ class AuthController {
                 },
             });
             if (!user) {
-                return apiResponse_1.default.error(res, 'Invalid credentials or tenant mismatch.', null, 401);
+                return apiResponse_1.default.error(res, 'Invalid credentials.', null, 401);
+            }
+            // If user belongs to a tenant, verify if tenant is active
+            if (user.tenant) {
+                if (!user.tenant.isActive) {
+                    return apiResponse_1.default.error(res, 'This society space is suspended. Please contact Super Admin.', null, 403);
+                }
             }
             const isMatch = await bcryptjs_1.default.compare(password, user.passwordHash);
             if (!isMatch) {

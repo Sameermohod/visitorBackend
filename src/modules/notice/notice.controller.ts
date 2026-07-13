@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../../configs/db';
 import ApiResponse from '../../utils/apiResponse';
+import { sendEmail, getNoticePublishedTemplate } from '../../utils/emailService';
 
 const noticeSchema = z.object({
   title: z.string().min(3),
@@ -26,6 +27,36 @@ export class NoticeController {
           visibility: data.visibility,
           createdBy: userId,
         },
+      });
+
+      // Fetch tenant details
+      const tenant = await prisma.tenant.findUnique({
+        where: { id: tenantId }
+      });
+
+      // Fetch all onboarded residents to notify them
+      const residents = await prisma.resident.findMany({
+        where: { tenantId, deletedAt: null },
+        include: { user: true }
+      });
+
+      // Send notice email notification to all residents
+      residents.forEach((r) => {
+        if (r.user?.email) {
+          sendEmail(
+            r.user.email,
+            `📢 New Notice: ${notice.title} - ${tenant?.name || 'Society Board'}`,
+            getNoticePublishedTemplate(
+              r.user.firstName,
+              notice.title,
+              notice.content,
+              notice.category || 'GENERAL',
+              tenant?.name || 'Society Board'
+            )
+          ).catch((err) => {
+            console.error(`Failed to send notice email to ${r.user.email}:`, err);
+          });
+        }
       });
 
       return ApiResponse.success(res, notice, 'Notice published successfully', 201);

@@ -5198,3 +5198,26 @@
 [31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
 
 [31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-05 14:02:31:231] [[33mwarn[39m]: [33mJWT_ACCESS_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-05 14:02:31:231] [[33mwarn[39m]: [33mJWT_REFRESH_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-05 14:02:31:231] [[32minfo[39m]: [32mRealtime: Socket.IO ready[39m
+[2026-11-05 14:02:31:231] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-11-05 14:02:31:231] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-11-05 14:02:31:231] [[32minfo[39m]: [32mAutopay scheduler started (checks every 6 hours).[39m
+[2026-11-05 14:02:31:231] [[32minfo[39m]: [32mEscalation scheduler started (checks every hour).[39m
+[2026-11-05 14:10:21:1021] [[35mhttp[39m]: [35m[0mGET / [33m404[0m 15.641 ms - 53[0m[39m
+[2026-11-05 14:10:21:1021] [[35mhttp[39m]: [35m[0mGET /favicon.ico [33m404[0m 1.829 ms - 53[0m[39m
+[2026-11-05 14:13:09:139] [[33mwarn[39m]: [33mJWT_ACCESS_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-05 14:13:09:139] [[33mwarn[39m]: [33mJWT_REFRESH_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-05 14:13:09:139] [[32minfo[39m]: [32mRealtime: Socket.IO ready[39m
+[2026-11-05 14:13:09:139] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-11-05 14:13:09:139] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-11-05 14:13:09:139] [[32minfo[39m]: [32mAutopay scheduler started (checks every 6 hours).[39m
+[2026-11-05 14:13:09:139] [[32minfo[39m]: [32mEscalation scheduler started (checks every hour).[39m
+[2026-11-05 14:47:53:4753] [[33mwarn[39m]: [33mJWT_ACCESS_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-05 14:47:53:4753] [[33mwarn[39m]: [33mJWT_REFRESH_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-05 14:47:53:4753] [[32minfo[39m]: [32mRealtime: Socket.IO ready[39m
+[2026-11-05 14:47:53:4753] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-11-05 14:47:53:4753] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-11-05 14:47:53:4753] [[32minfo[39m]: [32mAutopay scheduler started (checks every 6 hours).[39m
+[2026-11-05 14:47:53:4753] [[32minfo[39m]: [32mEscalation scheduler started (checks every hour).[39m

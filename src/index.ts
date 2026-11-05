@@ -148,8 +148,9 @@ app.use('*', (req, res) => {
 // Centralized Error Handling Middle-ware
 app.use(errorHandler);
 
-// Start server
-server.listen(PORT, () => {
+// On Vercel the platform runs the app itself (no listening port, no background jobs, no WebSockets), so only start the server elsewhere
+const serverless = !!process.env.VERCEL;
+if (!serverless) server.listen(PORT, () => {
   logger.info(`🚀 Server running on http://localhost:${PORT}`);
   logger.info(`📖 API Docs available at http://localhost:${PORT}/api-docs`);
   // Open the database connection now and keep it warm: the first request after an idle spell otherwise
@@ -160,3 +161,5 @@ server.listen(PORT, () => {
   startAutopayScheduler();
   startEscalationScheduler();
 });
+
+export default app;

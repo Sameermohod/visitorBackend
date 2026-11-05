@@ -24,6 +24,7 @@ const loginSchema = z.object({
   password: z.string().min(1).max(128),
   tenantSlug: z.string().optional(), // Nullable for global Super Admin login
 });
+console.log("loginSchema", loginSchema);
 
 const signupSchema = z.object({
   email: z.string().email().max(254),

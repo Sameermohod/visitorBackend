@@ -9,6 +9,8 @@ generator client {
   provider        = "prisma-client-js"
   // One SQL statement for nested includes instead of one round trip per level
   previewFeatures = ["relationJoins"]
+  // The engine for the machine it was generated on, and for Vercel / AWS Lambda
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
 }
 
 enum SubscriptionTier {

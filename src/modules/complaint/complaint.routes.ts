@@ -39,7 +39,7 @@ router.post(
  */
 router.post(
   '/:complaintId/assign',
-  checkPermission('complaints:resolve'),
+  checkPermission('complaints:resolve'), // the controller further limits this to Admin, Secretary and Committee
   ComplaintController.assignStaff
 );
 
@@ -61,6 +61,12 @@ router.patch(
  *   post:
  *     summary: Add note or update comment
  */
+router.post(
+  '/:complaintId/escalate',
+  checkPermission('complaints:view'), // the controller decides who may escalate and when
+  ComplaintController.escalate
+);
+
 router.post(
   '/:complaintId/comments',
   checkPermission('complaints:view'),

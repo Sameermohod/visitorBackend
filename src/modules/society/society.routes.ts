@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { SocietyController } from './society.controller';
-import { authenticate, checkPermission } from '../../middleware/auth';
+import { authenticate, checkPermission, checkAnyPermission } from '../../middleware/auth';
 
 const router = Router();
 
@@ -45,7 +45,8 @@ router.post(
  *   get:
  *     summary: Get simple flat lists
  */
-router.get('/flats', SocietyController.getFlats);
+// Lists every resident of every flat, so only roles that run the society or the gate may call it
+router.get('/flats', checkAnyPermission('residents:view', 'visitors:gate'), SocietyController.getFlats);
 
 /**
  * @swagger

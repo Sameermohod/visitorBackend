@@ -38,4 +38,20 @@ router.post('/refresh', AuthController.refresh);
  */
 router.post('/logout', authenticate, AuthController.logout);
 
+/**
+ * @swagger
+ * /api/v1/auth/change-password:
+ *   post:
+ *     summary: Change own password
+ */
+router.post('/change-password', authenticate, AuthController.changePassword);
+
+/**
+ * @swagger
+ * /api/v1/auth/mcp-token:
+ *   post:
+ *     summary: Create a long-lived token to connect an AI app (MCP)
+ */
+router.post('/mcp-token', authenticate, AuthController.createMcpToken);
+
 export default router;

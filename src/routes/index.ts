@@ -10,6 +10,14 @@ import analyticsRouter from '../modules/analytics/analytics.routes';
 import staffRouter from '../modules/staff/staff.routes';
 import chatRouter from '../modules/chat/chat.routes';
 import superAdminRouter from '../modules/super-admin/super-admin.routes';
+import chargesRouter from '../modules/charges/charges.routes';
+import paymentsRouter from '../modules/payments/payments.routes';
+import notificationsRouter from '../modules/notifications/notifications.routes';
+import usersRouter from '../modules/users/users.routes';
+import tenancyRouter from '../modules/tenancy/tenancy.routes';
+import camerasRouter from '../modules/cameras/cameras.routes';
+import messagesRouter from '../modules/messages/messages.routes';
+import safetyRouter from '../modules/safety/safety.routes';
 import ApiResponse from '../utils/apiResponse';
 
 const router = Router();
@@ -31,5 +39,13 @@ router.use('/analytics', analyticsRouter);
 router.use('/staff', staffRouter);
 router.use('/chat', chatRouter);
 router.use('/super-admin', superAdminRouter);
+router.use('/charges', chargesRouter);
+router.use('/payments', paymentsRouter);
+router.use('/notifications', notificationsRouter);
+router.use('/users', usersRouter);
+router.use('/tenancies', tenancyRouter);
+router.use('/cameras', camerasRouter);
+router.use('/messages', messagesRouter);
+router.use('/safety', safetyRouter);
 
 export default router;

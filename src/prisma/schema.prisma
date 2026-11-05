@@ -6,7 +6,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // One SQL statement for nested includes instead of one round trip per level
+  previewFeatures = ["relationJoins"]
 }
 
 enum SubscriptionTier {
@@ -102,6 +104,17 @@ model Tenant {
   aiEnabled          Boolean            @default(false) @map("ai_enabled")
   aiProvider         String             @default("GEMINI") @map("ai_provider") @db.VarChar(50)
   aiApiKey           String?            @map("ai_api_key") @db.Text
+
+  // Each society connects its own Stripe account. Keys are stored AES-256-GCM encrypted.
+  stripeSecretKeyEnc     String?        @map("stripe_secret_key_enc") @db.Text
+  stripeWebhookSecretEnc String?        @map("stripe_webhook_secret_enc") @db.Text
+  stripeAccountName      String?        @map("stripe_account_name") @db.VarChar(150)
+  stripeMode             String?        @map("stripe_mode") @db.VarChar(10)
+  stripeConnectedAt      DateTime?      @map("stripe_connected_at") @db.Timestamptz
+  currency               String         @default("inr") @db.VarChar(3)
+
+  // Public base URL of the society's camera gateway (MediaMTX), e.g. https://cam.mysociety.in
+  cameraGatewayUrl       String?        @map("camera_gateway_url") @db.VarChar(255)
   createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt          DateTime           @default(now()) @map("updated_at") @db.Timestamptz
   deletedAt          DateTime?          @map("deleted_at") @db.Timestamptz
@@ -122,9 +135,17 @@ model Tenant {
   parkingSlots       ParkingSlot[]
   vehicles           Vehicle[]
   invoices           MaintenanceInvoice[]
+  charges            Charge[]
+  tenancies          Tenancy[]
+  rentPayments       RentPayment[]
+  cameras            Camera[]
+  cameraAccess       CameraAccess[]
+  cameraViews        CameraViewLog[]
+  autopayEnrollments AutopayEnrollment[]
   payments           Payment[]
   notices            Notice[]
   notifications      Notification[]
+  conversations      Conversation[]
   auditLogs          AuditLog[]
 
   @@map("tenants")
@@ -176,6 +197,18 @@ model User {
   roleId          String            @map("role_id") @db.Uuid
   isVerified      Boolean           @default(false) @map("is_verified")
   refreshToken    String?           @map("refresh_token") @db.Text
+  mustChangePassword Boolean        @default(false) @map("must_change_password")
+  // An Admin/Secretary can hide the AI chatbot (and AI-app access) from a particular person
+  aiChatDisabled  Boolean           @default(false) @map("ai_chat_disabled")
+  // An Admin/Secretary can stop a person from sending messages (they can still read the office's replies)
+  messagingDisabled Boolean         @default(false) @map("messaging_disabled")
+  conversationMemberships ConversationMember[]
+  sentMessages    Message[]         @relation("MessageSender")
+  autopay         AutopayEnrollment?
+  rentedTenancies Tenancy[]         @relation("TenancyRenter")
+  cameraAccess    CameraAccess[]
+  cameraViews     CameraViewLog[]
+  ownedTenancies  Tenancy[]         @relation("TenancyOwner")
   createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime          @default(now()) @map("updated_at") @db.Timestamptz
   deletedAt       DateTime?         @map("deleted_at") @db.Timestamptz
@@ -201,6 +234,8 @@ model User {
   notifications   Notification[]
   auditLogs       AuditLog[]
 
+  @@index([tenantId, email])
+  @@index([roleId])
   @@map("users")
 }
 
@@ -223,6 +258,7 @@ model Society {
   updater   User?     @relation("SocietyUpdatedBy", fields: [updatedBy], references: [id], onDelete: SetNull)
   buildings Building[]
 
+  @@index([tenantId])
   @@map("societies")
 }
 
@@ -244,6 +280,8 @@ model Building {
   updater    User?     @relation("BuildingUpdatedBy", fields: [updatedBy], references: [id], onDelete: SetNull)
   wings      Wing[]
 
+  @@index([tenantId])
+  @@index([societyId])
   @@map("buildings")
 }
 
@@ -261,6 +299,8 @@ model Wing {
   building     Building  @relation(fields: [buildingId], references: [id], onDelete: Cascade)
   flats        Flat[]
 
+  @@index([tenantId])
+  @@index([buildingId])
   @@map("wings")
 }
 
@@ -278,11 +318,14 @@ model Flat {
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   wing        Wing      @relation(fields: [wingId], references: [id], onDelete: Cascade)
   residents   Resident[]
+  tenancies   Tenancy[]
   visitorLogs VisitorLog[]
   invoices    MaintenanceInvoice[]
   parkingSlots ParkingSlot[]
   vehicles    Vehicle[]
 
+  @@index([tenantId])
+  @@index([wingId])
   @@map("flats")
 }
 
@@ -302,6 +345,9 @@ model Resident {
   flat              Flat?           @relation(fields: [flatId], references: [id], onDelete: SetNull)
   preapprovedVisitors Visitor[]
 
+  @@index([tenantId])
+  @@index([userId])
+  @@index([flatId])
   @@map("residents")
 }
 
@@ -321,11 +367,18 @@ model Staff {
   deletedAt     DateTime?         @map("deleted_at") @db.Timestamptz
   isActive      Boolean           @default(true) @map("is_active")
 
+  // On leave: cannot be assigned complaints between these dates (inclusive)
+  onLeaveFrom   DateTime?         @map("on_leave_from") @db.Date
+  onLeaveUntil  DateTime?         @map("on_leave_until") @db.Date
+  leaveReason   String?           @map("leave_reason") @db.VarChar(200)
+
   tenant        Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user          User?             @relation("StaffUser", fields: [userId], references: [id], onDelete: SetNull)
   attendance    StaffAttendance[]
   complaints    Complaint[]
 
+  @@index([tenantId])
+  @@index([userId])
   @@map("staff")
 }
 
@@ -340,6 +393,8 @@ model StaffAttendance {
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   staff     Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
+  @@index([staffId])
   @@map("staff_attendance")
 }
 
@@ -364,6 +419,8 @@ model Visitor {
   resident       Resident?     @relation(fields: [preApprovedBy], references: [id], onDelete: SetNull)
   logs           VisitorLog[]
 
+  @@index([tenantId, status])
+  @@index([preApprovedBy])
   @@map("visitors")
 }
 
@@ -384,6 +441,9 @@ model VisitorLog {
   guardIn      User?     @relation("CheckedInBy", fields: [checkedInBy], references: [id], onDelete: SetNull)
   guardOut     User?     @relation("CheckedOutBy", fields: [checkedOutBy], references: [id], onDelete: SetNull)
 
+  @@index([tenantId, checkedInAt])
+  @@index([visitorId])
+  @@index([flatId])
   @@map("visitor_logs")
 }
 
@@ -404,11 +464,24 @@ model Complaint {
   updatedAt    DateTime          @default(now()) @map("updated_at") @db.Timestamptz
   deletedAt    DateTime?         @map("deleted_at") @db.Timestamptz
 
+  // Waiting in the assigned technician's queue (they are busy); cleared when the job starts
+  queuedAt        DateTime?      @map("queued_at") @db.Timestamptz
+  // Escalation to higher authority: 0 none, 1 Society Secretary, 2 Society Admin
+  escalationLevel Int            @default(0) @map("escalation_level")
+  escalatedTo     String?        @map("escalated_to") @db.VarChar(30)
+  escalatedAt     DateTime?      @map("escalated_at") @db.Timestamptz
+  escalatedBy     String?        @map("escalated_by") @db.Uuid
+  escalationNote  String?        @map("escalation_note")
+
   tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   resident     User              @relation(fields: [raisedBy], references: [id], onDelete: Cascade)
   staff        Staff?            @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
   comments     ComplaintComment[]
 
+  @@index([tenantId, status])
+  @@index([raisedBy])
+  @@index([assignedTo])
+  @@index([assignedTo, status])
   @@map("complaints")
 }
 
@@ -425,6 +498,7 @@ model ComplaintComment {
   complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([complaintId])
   @@map("complaint_comments")
 }
 
@@ -481,11 +555,64 @@ model MaintenanceInvoice {
   updatedAt         DateTime      @default(now()) @map("updated_at") @db.Timestamptz
   deletedAt         DateTime?     @map("deleted_at") @db.Timestamptz
 
+  // Issued charges (maintenance / function fees) link their per-flat invoices back to the charge
+  chargeId          String?       @map("charge_id") @db.Uuid
+  title             String?       @db.VarChar(150)
+  kind              String        @default("MAINTENANCE") @db.VarChar(30)
+  autopayAttemptedAt DateTime?    @map("autopay_attempted_at") @db.Timestamptz
+
   tenant            Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   flat              Flat          @relation(fields: [flatId], references: [id], onDelete: Cascade)
+  charge            Charge?       @relation(fields: [chargeId], references: [id], onDelete: SetNull)
   payments          Payment[]
 
+  @@index([tenantId, status])
+  @@index([flatId])
+  @@index([tenantId, billPeriodStart])
+  @@index([chargeId])
   @@map("maintenance_invoices")
+}
+
+// A charge issued by the Admin/Secretary to every occupied flat (monthly maintenance, a function fee, ...)
+model Charge {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  title       String    @db.VarChar(150)
+  kind        String    @default("MAINTENANCE") @db.VarChar(30)
+  description String?
+  amount      Decimal   @db.Decimal(10, 2)
+  gstRate     Decimal   @default(0) @map("gst_rate") @db.Decimal(5, 2)
+  dueDate     DateTime  @map("due_date") @db.Date
+  createdBy   String    @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoices    MaintenanceInvoice[]
+
+  @@index([tenantId, createdAt])
+  @@map("charges")
+}
+
+// A resident's saved card (a Stripe customer + payment method on the society's own Stripe account) for autopay
+model AutopayEnrollment {
+  id                    String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId              String   @map("tenant_id") @db.Uuid
+  userId                String   @unique @map("user_id") @db.Uuid
+  stripeCustomerId      String   @map("stripe_customer_id") @db.VarChar(100)
+  stripePaymentMethodId String?  @map("stripe_payment_method_id") @db.VarChar(100)
+  brand                 String?  @db.VarChar(30)
+  last4                 String?  @db.VarChar(4)
+  enabled               Boolean  @default(false)
+  lastError             String?  @map("last_error")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  tenant                Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, enabled])
+  @@map("autopay_enrollments")
 }
 
 model Payment {
@@ -498,12 +625,16 @@ model Payment {
   transactionId     String   @unique @map("transaction_id") @db.VarChar(100)
   paymentStatus     String   @default("SUCCESS") @map("payment_status") @db.VarChar(50)
   paymentReceiptUrl String?  @map("payment_receipt_url") @db.VarChar(255)
+  provider          String   @default("MANUAL") @db.VarChar(20)
+  reference         String?  @db.VarChar(100)
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   invoice           MaintenanceInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   user              User     @relation(fields: [userId], references: [id])
 
+  @@index([invoiceId])
+  @@index([tenantId])
   @@map("payments")
 }
 
@@ -525,6 +656,7 @@ model Notice {
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   creator     User      @relation("NoticeCreatedBy", fields: [createdBy], references: [id], onDelete: Cascade)
 
+  @@index([tenantId, publishAt])
   @@map("notices")
 }
 
@@ -541,6 +673,7 @@ model Notification {
   tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("notifications")
 }
 
@@ -558,5 +691,187 @@ model AuditLog {
   tenant       Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([tenantId, createdAt])
   @@map("audit_logs")
+}
+
+// A flat owner renting the flat out. One ACTIVE tenancy per flat; ended ones stay as the flat's rental history.
+model Tenancy {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  flatId         String    @map("flat_id") @db.Uuid
+  ownerUserId    String    @map("owner_user_id") @db.Uuid
+  renterUserId   String?   @map("renter_user_id") @db.Uuid
+
+  // Snapshot of the renter, so the history survives even after their login is closed
+  renterFirstName String   @map("renter_first_name") @db.VarChar(100)
+  renterLastName  String   @map("renter_last_name") @db.VarChar(100)
+  renterEmail     String   @map("renter_email") @db.VarChar(255)
+  renterPhone     String   @map("renter_phone") @db.VarChar(20)
+
+  startDate      DateTime  @map("start_date") @db.Date
+  endDate        DateTime? @map("end_date") @db.Date
+  monthlyRent    Decimal   @map("monthly_rent") @db.Decimal(10, 2)
+  securityDeposit Decimal  @default(0) @map("security_deposit") @db.Decimal(10, 2)
+  notes          String?
+  // What the renter may do in the app: {"visitors": true, "complaints": true}
+  access         Json      @default("{\"visitors\":true,\"complaints\":true}")
+
+  status         String    @default("ACTIVE") @db.VarChar(10)
+  endedAt        DateTime? @map("ended_at") @db.Date
+  endReason      String?   @map("end_reason")
+  depositReturned Boolean? @map("deposit_returned")
+  endedBy        String?   @map("ended_by") @db.Uuid
+
+  createdBy      String    @map("created_by") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  flat           Flat      @relation(fields: [flatId], references: [id], onDelete: Cascade)
+  owner          User      @relation("TenancyOwner", fields: [ownerUserId], references: [id], onDelete: Cascade)
+  renter         User?     @relation("TenancyRenter", fields: [renterUserId], references: [id], onDelete: SetNull)
+  payments       RentPayment[]
+
+  @@index([tenantId, status])
+  @@index([flatId, status])
+  @@index([ownerUserId])
+  @@index([renterUserId])
+  @@map("tenancies")
+}
+
+// Rent the owner has received from the renter (the owner's own record; not the society's maintenance bills)
+model RentPayment {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  tenancyId  String   @map("tenancy_id") @db.Uuid
+  month      String   @db.VarChar(7)
+  amount     Decimal  @db.Decimal(10, 2)
+  paidOn     DateTime @map("paid_on") @db.Date
+  method     String   @db.VarChar(20)
+  reference  String?  @db.VarChar(100)
+  note       String?
+  recordedBy String   @map("recorded_by") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenancy    Tenancy  @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+
+  @@index([tenancyId, month])
+  @@map("rent_payments")
+}
+
+// A camera the society makes available for live viewing
+model Camera {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(100)
+  location    String?   @db.VarChar(150)
+  kind        String    @default("COMMON") @db.VarChar(20)
+  // GATEWAY: served by the society's own gateway at gatewayPath. HLS_URL: a ready-made HLS link (e.g. from a vendor cloud), stored encrypted
+  source      String    @db.VarChar(10)
+  gatewayPath String?   @map("gateway_path") @db.VarChar(100)
+  streamUrlEnc String?  @map("stream_url_enc") @db.Text
+  isActive    Boolean   @default(true) @map("is_active")
+  createdBy   String    @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  access      CameraAccess[]
+  views       CameraViewLog[]
+
+  @@index([tenantId, deletedAt])
+  @@map("cameras")
+}
+
+// One person the Secretary/Admin allowed to watch one camera (optionally until a date)
+model CameraAccess {
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  cameraId  String    @map("camera_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  grantedBy String    @map("granted_by") @db.Uuid
+  expiresAt DateTime? @map("expires_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  camera    Camera    @relation(fields: [cameraId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([cameraId, userId])
+  @@index([userId])
+  @@map("camera_access")
+}
+
+// Who opened which camera and when (an audit trail for privacy)
+model CameraViewLog {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  cameraId  String   @map("camera_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  ipAddress String?  @map("ip_address") @db.VarChar(45)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  camera    Camera   @relation(fields: [cameraId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([cameraId, createdAt])
+  @@map("camera_view_logs")
+}
+
+// ---- Messaging ----
+// DIRECT: two people (directKey is their two ids sorted, so a pair can only ever have one conversation).
+// COMMUNITY: the society-wide channel (directKey is 'community'); who may read it is decided by role.
+model Conversation {
+  id                 String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId           String   @map("tenant_id") @db.Uuid
+  kind               String   @db.VarChar(10)
+  directKey          String   @map("direct_key") @db.VarChar(80)
+  title              String?  @db.VarChar(100)
+  lastMessageAt      DateTime @default(now()) @map("last_message_at") @db.Timestamptz
+  lastMessagePreview String?  @map("last_message_preview") @db.VarChar(140)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  members  ConversationMember[]
+  messages Message[]
+
+  @@unique([tenantId, directKey])
+  @@index([tenantId, lastMessageAt])
+  @@map("conversations")
+}
+
+model ConversationMember {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  conversationId String   @map("conversation_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  lastReadAt     DateTime @default(now()) @map("last_read_at") @db.Timestamptz
+  joinedAt       DateTime @default(now()) @map("joined_at") @db.Timestamptz
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@map("conversation_members")
+}
+
+model Message {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  senderId       String    @map("sender_id") @db.Uuid
+  body           String
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy      String?   @map("deleted_by") @db.Uuid
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("messages")
 }

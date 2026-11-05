@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../configs/db';
 import ApiResponse from '../utils/apiResponse';
+import { TtlCache } from '../utils/cache';
+
+type CachedTenant = { id: string; slug: string; isActive: boolean };
+
+// Tenant lookups happen on every request; cache them briefly. Cleared on suspend/delete.
+export const tenantCache = new TtlCache<CachedTenant>(30_000);
 
 // Extend Express Request interface to include tenant details
 declare global {
@@ -26,6 +32,9 @@ export const tenantResolver = async (
     '/api/v1/auth/signup',
     '/api/v1/auth/refresh',
     '/api/v1/auth/super-login',
+    // Account actions that only need the signed-in user, so they also work for the platform Super Admin (no society)
+    '/api/v1/auth/mcp-token',
+    '/api/v1/auth/change-password',
     '/api/v1/health',
     '/api/v1/super-admin',
     '/api-docs'
@@ -43,16 +52,23 @@ export const tenantResolver = async (
   }
 
   try {
-    let tenant;
+    const cacheKey = tenantId ? `id:${tenantId}` : `slug:${tenantSlug}`;
+    let tenant: CachedTenant | null | undefined = tenantCache.get(cacheKey);
 
-    if (tenantId) {
-      tenant = await prisma.tenant.findUnique({
-        where: { id: tenantId, deletedAt: null },
-      });
-    } else if (tenantSlug) {
-      tenant = await prisma.tenant.findUnique({
-        where: { slug: tenantSlug, deletedAt: null },
-      });
+    if (!tenant) {
+      const select = { id: true, slug: true, isActive: true } as const;
+      if (tenantId) {
+        tenant = await prisma.tenant.findUnique({
+          where: { id: tenantId, deletedAt: null },
+          select,
+        });
+      } else if (tenantSlug) {
+        tenant = await prisma.tenant.findUnique({
+          where: { slug: tenantSlug, deletedAt: null },
+          select,
+        });
+      }
+      if (tenant) tenantCache.set(cacheKey, tenant);
     }
 
     if (!tenant) {

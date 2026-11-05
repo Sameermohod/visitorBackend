@@ -21,6 +21,11 @@ export class ChatController {
       const userRole = req.user!.role;
       const { message, history } = chatMessageSchema.parse(req.body);
 
+      // The Admin/Secretary can switch the chatbot off for a particular person
+      if (req.user!.aiChatDisabled) {
+        return ApiResponse.error(res, 'The chatbot has been turned off for your account by the society office.', null, 403);
+      }
+
       // 1. Fetch Tenant settings to check AI eligibility
       const tenant = await prisma.tenant.findUnique({
         where: { id: tenantId },
@@ -140,7 +145,7 @@ export class ChatController {
               complaintsWhereClause.raisedBy = userId;
             } else if (userRole === 'Maintenance Staff') {
               complaintsWhereClause.assignedTo = userId;
-            } else if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
+            } else if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
               return { error: 'Access denied: unauthorized.' };
             }
             const complaints = await prisma.complaint.findMany({
@@ -159,7 +164,7 @@ export class ChatController {
             return complaints;
 
           case 'get_residents_directory':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
               return { error: 'Access denied: administrative permissions required.' };
             }
             const allResidents = await prisma.resident.findMany({
@@ -182,7 +187,7 @@ export class ChatController {
             }));
 
           case 'get_visitor_logs':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Security Guard' && userRole !== 'Committee Member') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Security Guard' && userRole !== 'Committee Member') {
               return { error: 'Access denied: unauthorized.' };
             }
             const logs = await prisma.visitorLog.findMany({
@@ -203,7 +208,7 @@ export class ChatController {
             }));
 
           case 'get_complaints':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
               return { error: 'Access denied: administrative permissions required.' };
             }
             const allComplaints = await prisma.complaint.findMany({
@@ -224,7 +229,7 @@ export class ChatController {
             }));
 
           case 'get_billing_summary':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin') {
               return { error: 'Access denied: society administrator role required. Supervisor and other roles are restricted.' };
             }
             const invoices = await prisma.maintenanceInvoice.findMany({
@@ -241,7 +246,7 @@ export class ChatController {
             };
 
           case 'get_staff':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
               return { error: 'Access denied: unauthorized.' };
             }
             const staff = await prisma.staff.findMany({
@@ -258,7 +263,7 @@ export class ChatController {
             return staff;
 
           case 'search_directory':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
               return { error: 'Access denied: directory search restricted.' };
             }
             const searchQuery = args.query || '';
@@ -341,7 +346,7 @@ export class ChatController {
             };
 
           case 'get_user_details':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
               return { error: 'Access denied: unauthorized.' };
             }
             const targetId = args.userId;
@@ -435,7 +440,7 @@ export class ChatController {
                 role: staffDetails.type,
                 shiftStart: staffDetails.shiftStart,
                 shiftEnd: staffDetails.shiftEnd,
-                salaryMonthly: userRole === 'Society Admin' || userRole === 'Super Admin' ? Number(staffDetails.salaryMonthly || 0) : 'Hidden',
+                salaryMonthly: userRole === 'Society Admin' || userRole === 'Society Secretary' || userRole === 'Super Admin' ? Number(staffDetails.salaryMonthly || 0) : 'Hidden',
                 onboardedAt: staffDetails.createdAt,
                 linkedUser: staffDetails.user ? {
                   email: staffDetails.user.email,
@@ -445,7 +450,7 @@ export class ChatController {
             }
 
           case 'verify_vehicle':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
               return { error: 'Access denied: unauthorized.' };
             }
             const targetPlate = args.plateNumber || '';
@@ -474,7 +479,7 @@ export class ChatController {
             } : { message: 'Vehicle not registered in the society directory.' };
 
           case 'get_staff_attendance':
-            if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
+            if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
               return { error: 'Access denied: administrative permissions required.' };
             }
             const attendance = await prisma.staffAttendance.findMany({

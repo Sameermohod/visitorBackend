@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { seedRolesAndPermissions } from './rbac';
 
 const prisma = new PrismaClient();
 
@@ -47,119 +48,8 @@ async function main() {
     },
   });
 
-  // 2. Seed Dynamic Roles
-  console.log('Seeding Roles...');
-  const roles = [
-    { name: 'Super Admin', description: 'Global platform operations and SaaS billing overseer' },
-    { name: 'Society Admin', description: 'Complete administrator control within a housing tenant' },
-    { name: 'Committee Member', description: 'Assists admin, manages notices and approves expenses' },
-    { name: 'Resident', description: 'Apartment owner or tenant user' },
-    { name: 'Security Guard', description: 'Gate access tracking, cab entries and SOS notifier' },
-    { name: 'Maintenance Staff', description: 'Category assigned cleaners, plumbers or electricians' },
-    { name: 'Accountant', description: 'Financial ledger manager and invoice overrides accountant' },
-  ];
-
-  const dbRoles: Record<string, any> = {};
-  for (const role of roles) {
-    dbRoles[role.name] = await prisma.role.upsert({
-      where: { name: role.name },
-      update: { description: role.description },
-      create: { name: role.name, description: role.description },
-    });
-  }
-
-  // 3. Seed Standard Granular Permissions
-  console.log('Seeding Permissions...');
-  const permissions = [
-    // Auth & Identity
-    { code: 'users:view', name: 'View Users', module: 'Auth' },
-    { code: 'users:edit', name: 'Modify Users', module: 'Auth' },
-
-    // Tenant / Society Settings
-    { code: 'tenant:settings', name: 'Update Tenant Customizations', module: 'Tenant' },
-    { code: 'society:manage', name: 'Manage Society Structures', module: 'Society' },
-
-    // Residents Directory
-    { code: 'residents:view', name: 'View Resident Profiles', module: 'Resident' },
-    { code: 'residents:manage', name: 'Onboard Residents', module: 'Resident' },
-
-    // Gate & Visitor Pass
-    { code: 'visitors:view', name: 'View Visitor Logs', module: 'Visitor' },
-    { code: 'visitors:create', name: 'Create Pre-Approved Passes', module: 'Visitor' },
-    { code: 'visitors:gate', name: 'Gate Entry Approval Access', module: 'Visitor' },
-
-    // Complaints SLA
-    { code: 'complaints:view', name: 'View Complaint Tickets', module: 'Complaint' },
-    { code: 'complaints:create', name: 'File Service Requests', module: 'Complaint' },
-    { code: 'complaints:resolve', name: 'Resolve or Escalate Tickets', module: 'Complaint' },
-
-    // Billing Ledger
-    { code: 'billing:view', name: 'View Maintenance Billing Logs', module: 'Billing' },
-    { code: 'billing:pay', name: 'Initiate Digital UPI Payments', module: 'Billing' },
-    { code: 'billing:manage', name: 'Generate Recurring society Invoices', module: 'Billing' },
-
-    // Staff attendance
-    { code: 'staff:manage', name: 'Manage Staff and Log Attendance', module: 'Staff' },
-    
-    // Safety alert
-    { code: 'safety:sos', name: 'Trigger Emergency SOS Alerts', module: 'Safety' },
-  ];
-
-  const dbPermissions: Record<string, any> = {};
-  for (const perm of permissions) {
-    dbPermissions[perm.code] = await prisma.permission.upsert({
-      where: { code: perm.code },
-      update: { name: perm.name, module: perm.module },
-      create: { code: perm.code, name: perm.name, module: perm.module },
-    });
-  }
-
-  // 4. Bind Role Permissions Mapping
-  console.log('Mapping Permissions to Roles...');
-  
-  // Define mappings
-  const mappings: Record<string, string[]> = {
-    'Super Admin': permissions.map((p) => p.code), // Access all
-    'Society Admin': [
-      'users:view', 'users:edit', 'tenant:settings', 'society:manage',
-      'residents:view', 'residents:manage', 'visitors:view', 'visitors:create',
-      'visitors:gate', 'complaints:view', 'complaints:create', 'complaints:resolve',
-      'billing:view', 'billing:pay', 'billing:manage', 'staff:manage', 'safety:sos'
-    ],
-    'Committee Member': [
-      'users:view', 'residents:view', 'visitors:view', 'visitors:create',
-      'complaints:view', 'complaints:resolve', 'billing:view', 'safety:sos'
-    ],
-    'Resident': [
-      'residents:view', 'visitors:create', 'complaints:view', 'complaints:create',
-      'billing:view', 'billing:pay', 'safety:sos'
-    ],
-    'Security Guard': [
-      'visitors:view', 'visitors:gate', 'safety:sos'
-    ],
-    'Maintenance Staff': [
-      'complaints:view', 'complaints:resolve'
-    ],
-    'Accountant': [
-      'billing:view', 'billing:manage'
-    ],
-  };
-
-  for (const [roleName, permCodes] of Object.entries(mappings)) {
-    const roleId = dbRoles[roleName].id;
-    for (const code of permCodes) {
-      const permissionId = dbPermissions[code].id;
-      
-      // Upsert into RolePermission joining table
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: { roleId, permissionId }
-        },
-        update: {},
-        create: { roleId, permissionId }
-      });
-    }
-  }
+  // 2-4. Roles, permissions and the role -> permission mapping (shared with `npm run prisma:seed:rbac`)
+  const { dbRoles } = await seedRolesAndPermissions(prisma);
 
   // 5. Seed default global Super Admin Account
   console.log('Generating Super Admin identity...');

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { NoticeController } from './notice.controller';
-import { authenticate } from '../../middleware/auth';
+import { authenticate, checkPermission } from '../../middleware/auth';
 
 const router = Router();
 
@@ -21,6 +21,6 @@ router.get('/', NoticeController.getNotices);
  *   post:
  *     summary: Create and publish notice announcement
  */
-router.post('/', NoticeController.createNotice);
+router.post('/', checkPermission('notices:manage'), NoticeController.createNotice);
 
 export default router;

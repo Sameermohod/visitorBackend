@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../../configs/db';
 import ApiResponse from '../../utils/apiResponse';
+import { getPagination } from '../../utils/pagination';
+import { notifyUsers } from '../../services/payments';
 import { sendEmail, getNoticePublishedTemplate } from '../../utils/emailService';
 
 const noticeSchema = z.object({
@@ -29,16 +31,22 @@ export class NoticeController {
         },
       });
 
-      // Fetch tenant details
-      const tenant = await prisma.tenant.findUnique({
-        where: { id: tenantId }
-      });
+      // Show it in everyone's bell (and live, if their app is open) right away
+      prisma.user.findMany({ where: { tenantId, deletedAt: null, id: { not: userId }, role: { name: { not: 'Super Admin' } } }, select: { id: true } })
+        .then((people) => notifyUsers(tenantId, people.map((p) => p.id), `📢 ${notice.title}`, notice.content.slice(0, 140), 'NOTICE'))
+        .catch((err) => console.error('Failed to notify society of notice:', err));
 
-      // Fetch all onboarded residents to notify them
-      const residents = await prisma.resident.findMany({
-        where: { tenantId, deletedAt: null },
-        include: { user: true }
-      });
+      // Fetch tenant name and all onboarded residents to notify, in parallel
+      const [tenant, residents] = await Promise.all([
+        prisma.tenant.findUnique({
+          where: { id: tenantId },
+          select: { name: true },
+        }),
+        prisma.resident.findMany({
+          where: { tenantId, deletedAt: null },
+          select: { user: { select: { email: true, firstName: true } } },
+        }),
+      ]);
 
       // Send notice email notification to all residents
       residents.forEach((r) => {
@@ -69,7 +77,7 @@ export class NoticeController {
     try {
       const tenantId = req.tenantId!;
 
-      const notices = await prisma.notice.findMany({
+      const notices = await prisma.notice.findMany({ relationLoadStrategy: 'join',
         where: { tenantId, deletedAt: null },
         include: {
           creator: {
@@ -77,6 +85,7 @@ export class NoticeController {
           },
         },
         orderBy: { publishAt: 'desc' },
+        ...getPagination(req),
       });
 
       return ApiResponse.success(res, notices, 'Notices fetched successfully');

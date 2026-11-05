@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../../configs/db';
 import ApiResponse from '../../utils/apiResponse';
+import { tenantCache } from '../../middleware/tenant';
+import { userCache } from '../../middleware/auth';
 
 export class SuperAdminController {
   // 1. Fetch all global dashboard data with filters
@@ -16,61 +18,92 @@ export class SuperAdminController {
       const endDate = req.query.endDate as string | undefined;
 
       // 1. Fetch all active tenants/societies
-      const tenants = await prisma.tenant.findMany({
-        where: { deletedAt: null },
-        orderBy: { name: 'asc' }
-      });
+      // The four lookups are independent, so run them in parallel.
+      // Sensitive columns (password hashes, refresh tokens, AI API keys) are never selected.
+      const tenantSummary = { select: { id: true, name: true, slug: true } };
+      const [tenants, users, staff, visitorLogs] = await Promise.all([
+        // 1. All active tenants/societies
+        prisma.tenant.findMany({
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logoUrl: true,
+            themePrimary: true,
+            themeSecondary: true,
+            subscriptionId: true,
+            subscriptionStatus: true,
+            trialEndsAt: true,
+            isActive: true,
+            aiEnabled: true,
+            aiProvider: true,
+            createdAt: true,
+          },
+          orderBy: { name: 'asc' }
+        }),
 
-      // 2. Fetch all users
-      const users = await prisma.user.findMany({
-        where: {
-          deletedAt: null,
-          ...(tenantId ? { tenantId } : {})
-        },
-        include: {
-          role: true,
-          tenant: true
-        },
-        orderBy: { createdAt: 'desc' }
-      });
+        // 2. All users
+        prisma.user.findMany({ relationLoadStrategy: 'join',
+          where: {
+            deletedAt: null,
+            ...(tenantId ? { tenantId } : {})
+          },
+          select: {
+            id: true,
+            tenantId: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            isVerified: true,
+            createdAt: true,
+            role: { select: { id: true, name: true } },
+            tenant: tenantSummary
+          },
+          orderBy: { createdAt: 'desc' }
+        }),
 
-      // 3. Fetch all staff members
-      const staff = await prisma.staff.findMany({
-        where: {
-          deletedAt: null,
-          ...(tenantId ? { tenantId } : {})
-        },
-        include: {
-          tenant: true
-        },
-        orderBy: { createdAt: 'desc' }
-      });
+        // 3. All staff members
+        prisma.staff.findMany({ relationLoadStrategy: 'join',
+          where: {
+            deletedAt: null,
+            ...(tenantId ? { tenantId } : {})
+          },
+          include: {
+            tenant: tenantSummary
+          },
+          orderBy: { createdAt: 'desc' }
+        }),
 
-      // 4. Fetch all visitor logs with date range and society filters
-      const visitorLogs = await prisma.visitorLog.findMany({
-        where: {
-          ...(tenantId ? { tenantId } : {}),
-          ...(startDate || endDate ? {
-            checkedInAt: {
-              ...(startDate ? { gte: new Date(startDate) } : {}),
-              ...(endDate ? { lte: new Date(endDate) } : {})
-            }
-          } : {})
-        },
-        include: {
-          tenant: true,
-          flat: {
-            include: {
-              wing: {
-                include: {
-                  building: true
+        // 4. Visitor logs with date range and society filters (most recent 1000)
+        prisma.visitorLog.findMany({ relationLoadStrategy: 'join',
+          where: {
+            ...(tenantId ? { tenantId } : {}),
+            ...(startDate || endDate ? {
+              checkedInAt: {
+                ...(startDate ? { gte: new Date(startDate) } : {}),
+                ...(endDate ? { lte: new Date(endDate) } : {})
+              }
+            } : {})
+          },
+          include: {
+            visitor: { select: { name: true, visitorType: true, vehicleNumber: true, company: true } },
+            tenant: tenantSummary,
+            flat: {
+              include: {
+                wing: {
+                  include: {
+                    building: true
+                  }
                 }
               }
             }
-          }
-        },
-        orderBy: { checkedInAt: 'desc' }
-      });
+          },
+          orderBy: { checkedInAt: 'desc' },
+          take: 1000
+        })
+      ]);
 
       return ApiResponse.success(res, {
         tenants,
@@ -110,6 +143,7 @@ export class SuperAdminController {
         where: { id },
         data: { isActive }
       });
+      tenantCache.clear();
 
       return ApiResponse.success(
         res,
@@ -144,9 +178,10 @@ export class SuperAdminController {
         where: { id },
         data: { 
           deletedAt: new Date(),
-          isActive: false 
+          isActive: false
         }
       });
+      tenantCache.clear();
 
       return ApiResponse.success(
         res,
@@ -181,6 +216,7 @@ export class SuperAdminController {
         where: { id },
         data: { deletedAt: new Date() }
       });
+      userCache.invalidate(id);
 
       return ApiResponse.success(res, null, 'User deleted successfully.');
     } catch (error) {

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { AnalyticsController } from './analytics.controller';
+import { OverviewController } from './overview';
 import { authenticate } from '../../middleware/auth';
 
 const router = Router();
@@ -14,5 +15,6 @@ router.use(authenticate);
  *     summary: Fetch role-based consolidated dashboard metrics
  */
 router.get('/dashboard', AnalyticsController.getDashboardStats);
+router.get('/overview', OverviewController.get);
 
 export default router;

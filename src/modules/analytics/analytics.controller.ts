@@ -11,16 +11,25 @@ export class AnalyticsController {
 
       // 1. Super Admin View (Multi-Tenant SaaS Overview)
       if (userRole === 'Super Admin') {
-        const totalTenants = await prisma.tenant.count({ where: { deletedAt: null } });
-        const activeTenants = await prisma.tenant.count({ where: { isActive: true, deletedAt: null } });
-        const subscriptions = await prisma.subscription.findMany();
-        
-        const tenantsDetails = await prisma.tenant.findMany({
-          where: { deletedAt: null },
-          include: {
-            subscription: true,
-          },
-        });
+        const [totalTenants, activeTenants, subscriptions, tenantsDetails] = await Promise.all([
+          prisma.tenant.count({ where: { deletedAt: null } }),
+          prisma.tenant.count({ where: { isActive: true, deletedAt: null } }),
+          prisma.subscription.findMany(),
+          prisma.tenant.findMany({
+            where: { deletedAt: null },
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              themePrimary: true,
+              themeSecondary: true,
+              isActive: true,
+              subscriptionStatus: true,
+              createdAt: true,
+              subscription: true,
+            },
+          }),
+        ]);
 
         return ApiResponse.success(res, {
           view: 'SUPER_ADMIN',
@@ -35,27 +44,28 @@ export class AnalyticsController {
       }
 
       // 2. Society Admin / Committee View (Single-Tenant Overview)
-      if (userRole === 'Society Admin' || userRole === 'Committee Member' || userRole === 'Accountant') {
-        const totalResidents = await prisma.resident.count({ where: { tenantId, deletedAt: null } });
-        const totalGuards = await prisma.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } });
-        
-        const openComplaints = await prisma.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } });
-        const resolvedComplaints = await prisma.complaint.count({ where: { tenantId, status: 'RESOLVED', deletedAt: null } });
-
-        const visitorsToday = await prisma.visitorLog.count({
-          where: {
-            tenantId,
-            checkedInAt: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)),
-            },
-          },
-        });
-
-        // Financial collection ratios
-        const aggregateInvoice = await prisma.maintenanceInvoice.aggregate({
-          where: { tenantId, deletedAt: null },
-          _sum: { totalAmount: true, paidAmount: true },
-        });
+      if (userRole === 'Society Admin' || userRole === 'Society Secretary' || userRole === 'Committee Member' || userRole === 'Accountant') {
+        const [
+          totalResidents,
+          totalGuards,
+          openComplaints,
+          resolvedComplaints,
+          visitorsToday,
+          aggregateInvoice,
+        ] = await Promise.all([
+          prisma.resident.count({ where: { tenantId, deletedAt: null } }),
+          prisma.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } }),
+          prisma.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } }),
+          prisma.complaint.count({ where: { tenantId, status: 'RESOLVED', deletedAt: null } }),
+          prisma.visitorLog.count({
+            where: { tenantId, checkedInAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+          }),
+          // Financial collection ratios
+          prisma.maintenanceInvoice.aggregate({
+            where: { tenantId, deletedAt: null },
+            _sum: { totalAmount: true, paidAmount: true },
+          }),
+        ]);
 
         const totalBilled = Number(aggregateInvoice._sum.totalAmount || 0);
         const totalCollected = Number(aggregateInvoice._sum.paidAmount || 0);
@@ -79,17 +89,14 @@ export class AnalyticsController {
 
       // 3. Supervisor View (Staff coordination dashboard)
       if (userRole === 'Supervisor') {
-        const totalResidents = await prisma.resident.count({ where: { tenantId, deletedAt: null } });
-        const totalGuards = await prisma.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } });
-        const openComplaints = await prisma.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } });
-        const visitorsToday = await prisma.visitorLog.count({
-          where: {
-            tenantId,
-            checkedInAt: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)),
-            },
-          },
-        });
+        const [totalResidents, totalGuards, openComplaints, visitorsToday] = await Promise.all([
+          prisma.resident.count({ where: { tenantId, deletedAt: null } }),
+          prisma.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } }),
+          prisma.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } }),
+          prisma.visitorLog.count({
+            where: { tenantId, checkedInAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+          }),
+        ]);
 
         return ApiResponse.success(res, {
           view: 'SUPERVISOR',
@@ -146,7 +153,7 @@ export class AnalyticsController {
       }
 
       // 6. Resident View (Personalized flat details)
-      const resident = await prisma.resident.findFirst({
+      const resident = await prisma.resident.findFirst({ relationLoadStrategy: 'join',
         where: { userId: req.user!.id, tenantId, deletedAt: null },
         include: { flat: true },
       });
@@ -155,17 +162,18 @@ export class AnalyticsController {
         return ApiResponse.error(res, 'Resident profile not found', null, 404);
       }
 
-      const personalComplaints = await prisma.complaint.count({
-        where: { raisedBy: req.user!.id, tenantId, deletedAt: null },
-      });
-
-      const personalPendingBills = await prisma.maintenanceInvoice.count({
-        where: { flatId: resident.flatId || '', tenantId, status: { in: ['UNPAID', 'PARTIALLY_PAID'] }, deletedAt: null },
-      });
-
-      const visitorPasses = await prisma.visitor.count({
-        where: { preApprovedBy: resident.id, tenantId },
-      });
+      const [personalComplaints, personalPendingBills, visitorPasses] = await Promise.all([
+        prisma.complaint.count({
+          where: { raisedBy: req.user!.id, tenantId, deletedAt: null },
+        }),
+        // A renter never sees the society's bills for the flat
+        userRole === 'Tenant' ? Promise.resolve(0) : prisma.maintenanceInvoice.count({
+          where: { flatId: resident.flatId || '', tenantId, status: { in: ['UNPAID', 'PARTIALLY_PAID'] }, deletedAt: null },
+        }),
+        prisma.visitor.count({
+          where: { preApprovedBy: resident.id, tenantId },
+        }),
+      ]);
 
       return ApiResponse.success(res, {
         view: 'RESIDENT',

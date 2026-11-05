@@ -3,6 +3,9 @@ import { z } from 'zod';
 import prisma from '../../configs/db';
 import ApiResponse from '../../utils/apiResponse';
 import logger from '../../configs/logger';
+import { getPagination } from '../../utils/pagination';
+import { allowTenantFeature } from '../../services/tenancyAccess';
+import { notifyUsers } from '../../services/payments';
 import { sendEmail, getVisitorGateAlertTemplate } from '../../utils/emailService';
 
 const preApproveSchema = z.object({
@@ -73,16 +76,14 @@ export class VisitorController {
             checkedInBy: guardId,
             notes: data.notes || 'Manual walk-in check-in completed at gate',
           },
+          include: { visitor: true, flat: true },
         });
 
         return { visitor, log };
       });
 
-      // Fetch the full log to return to client
-      const fullLog = await prisma.visitorLog.findUnique({
-        where: { id: result.log.id },
-        include: { visitor: true, flat: true },
-      });
+      // The log already carries visitor + flat, so no second round-trip is needed
+      const fullLog = result.log;
 
       // Asynchronously fetch occupants and notify them via SMTP email alerts
       prisma.resident.findMany({
@@ -94,6 +95,7 @@ export class VisitorController {
       }).then((flatOccupants) => {
         if (flatOccupants && flatOccupants.length > 0 && fullLog) {
           const flatNumber = flatOccupants[0].flat?.number || 'your flat';
+          notifyUsers(tenantId, flatOccupants.map((o) => o.userId), `Visitor at the gate: ${fullLog.visitor.name}`, `${fullLog.visitor.purpose || 'A visitor'} · checked in for flat ${flatNumber}`, 'VISITOR').catch((err) => logger.error('Notify: visitor alert failed:', err));
           for (const occ of flatOccupants) {
             if (occ.user && occ.user.email) {
               sendEmail(
@@ -123,6 +125,7 @@ export class VisitorController {
   // Pre-approve guest (Resident only)
   static async preApprove(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!(await allowTenantFeature(req, res, 'visitors'))) return; // a renter's passes can be switched off by the owner
       const tenantId = req.tenantId!;
       const data = preApproveSchema.parse(req.body);
 
@@ -165,7 +168,7 @@ export class VisitorController {
   static async getLogs(req: Request, res: Response, next: NextFunction) {
     try {
       const tenantId = req.tenantId!;
-      const logs = await prisma.visitorLog.findMany({
+      const logs = await prisma.visitorLog.findMany({ relationLoadStrategy: 'join',
         where: { tenantId },
         include: {
           visitor: true,
@@ -183,6 +186,7 @@ export class VisitorController {
           },
         },
         orderBy: { checkedInAt: 'desc' },
+        ...getPagination(req),
       });
 
       return ApiResponse.success(res, logs, 'Visitor logs loaded successfully');
@@ -194,6 +198,7 @@ export class VisitorController {
   // Get active pre-approvals for Resident
   static async getMyPreApprovals(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!(await allowTenantFeature(req, res, 'visitors'))) return;
       const tenantId = req.tenantId!;
       
       const resident = await prisma.resident.findFirst({
@@ -207,6 +212,7 @@ export class VisitorController {
       const preApprovals = await prisma.visitor.findMany({
         where: { tenantId, preApprovedBy: resident.id },
         orderBy: { createdAt: 'desc' },
+        ...getPagination(req),
       });
 
       return ApiResponse.success(res, preApprovals, 'Pre-approvals loaded successfully');
@@ -229,12 +235,12 @@ export class VisitorController {
         return ApiResponse.error(res, 'Missing QR code query parameter', null, 400);
       }
 
-      const visitor = await prisma.visitor.findFirst({
+      const visitor = await prisma.visitor.findFirst({ relationLoadStrategy: 'join',
         where: { tenantId, qrCode },
         include: {
           resident: {
             include: {
-              user: true,
+              user: { select: { id: true, firstName: true, lastName: true, phoneNumber: true } },
               flat: true,
             },
           },
@@ -294,7 +300,7 @@ export class VisitorController {
       );
 
       // Fetch the newly logged entry to return to client
-      const latestLog = await prisma.visitorLog.findFirst({
+      const latestLog = await prisma.visitorLog.findFirst({ relationLoadStrategy: 'join',
         where: { tenantId, visitorId, flatId },
         orderBy: { checkedInAt: 'desc' },
         include: { visitor: true, flat: true },
@@ -310,6 +316,7 @@ export class VisitorController {
       }).then((flatOccupants) => {
         if (flatOccupants && flatOccupants.length > 0 && latestLog) {
           const flatNumber = flatOccupants[0].flat?.number || 'your flat';
+          notifyUsers(tenantId, flatOccupants.map((o) => o.userId), `Visitor at the gate: ${latestLog.visitor.name}`, `${latestLog.visitor.purpose || 'A visitor'} · checked in for flat ${flatNumber}`, 'VISITOR').catch((err) => logger.error('Notify: visitor alert failed:', err));
           for (const occ of flatOccupants) {
             if (occ.user && occ.user.email) {
               sendEmail(
@@ -402,7 +409,7 @@ export class VisitorController {
       const userRole = req.user!.role;
       const userId = req.user!.id;
 
-      if (userRole === 'Resident') {
+      if (userRole === 'Resident' || userRole === 'Tenant') {
         const resident = await prisma.resident.findFirst({
           where: { userId, tenantId, deletedAt: null },
         });
@@ -421,7 +428,7 @@ export class VisitorController {
         if (visitor.preApprovedBy !== resident.id) {
           return ApiResponse.error(res, 'Access denied: you can only delete passes created by you.', null, 403);
         }
-      } else if (userRole !== 'Society Admin' && userRole !== 'Super Admin') {
+      } else if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin') {
         return ApiResponse.error(res, 'Access denied: unauthorized.', null, 403);
       }
 

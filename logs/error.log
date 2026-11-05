@@ -272,3 +272,1107 @@
 [31mCan't reach database server at `ep-plain-scene-ahegfx1h-pooler.c-3.us-east-1.aws.neon.tech:5432`[39m
 
 [31mPlease make sure your database server is running at `ep-plain-scene-ahegfx1h-pooler.c-3.us-east-1.aws.neon.tech:5432`.[39m
+[2026-10-31 15:48:31:4831] [[31merror[39m]: [31mPOST /api/v1/auth/signup - Error: [39m
+[31mInvalid `tx.tenant.create()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\modules\auth\auth.controller.ts:145:40[39m
+
+[31m  142 // Wrap in a transaction to guarantee data integrity[39m
+[31m  143 const result = await prisma.$transaction(async (tx) => {[39m
+[31m  144   // Create Tenant Space[39m
+[31m→ 145   const tenant = await tx.tenant.create([39m
+[31mUnique constraint failed on the fields: (`slug`)[39m
+[2026-10-31 16:10:58:1058] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:10:59:1059] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:16:1116] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:16:1116] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:18:1118] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:18:1118] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:20:1120] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:20:1120] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:23:1123] [[31merror[39m]: [31mGET /api/v1/complaints - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:23:1123] [[31merror[39m]: [31mGET /api/v1/staff/directory - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:23:1123] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:25:1125] [[31merror[39m]: [31mGET /api/v1/analytics/dashboard - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:11:25:1125] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mInconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1[39m
+[2026-10-31 16:23:32:2332] [[31merror[39m]: [31mPOST /api/v1/residents/onboard - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 6,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Password must be at least 6 characters.",[39m
+[31m    "path": [[39m
+[31m      "password"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-10-31 16:53:37:5337] [[31merror[39m]: [31mPOST /api/v1/staff/onboard - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 6,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Password must be at least 6 characters.",[39m
+[31m    "path": [[39m
+[31m      "password"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-10-31 17:19:32:1932] [[31merror[39m]: [31mPUT /api/v1/payments/stripe/settings - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "That does not look like a Stripe secret key (it starts with sk_test_ or sk_live_).",[39m
+[31m    "path": [[39m
+[31m      "secretKey"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-10-31 17:19:43:1943] [[31merror[39m]: [31mPOST /api/v1/payments/confirm - Error: No such checkout session[39m
+[2026-10-31 17:19:43:1943] [[31merror[39m]: [31mPOST /api/v1/payments/confirm - Error: No such checkout session[39m
+[2026-10-31 17:19:43:1943] [[31merror[39m]: [31mPOST /api/v1/payments/confirm - Error: No such checkout session[39m
+[2026-10-31 17:19:57:1957] [[31merror[39m]: [31mPOST /api/v1/payments/autopay/confirm - Error: No such checkout session[39m
+[2026-10-31 17:20:50:2050] [[31merror[39m]: [31mPUT /api/v1/payments/stripe/settings - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "That does not look like a Stripe secret key (it starts with sk_test_ or sk_live_).",[39m
+[31m    "path": [[39m
+[31m      "secretKey"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-10-31 17:20:57:2057] [[31merror[39m]: [31mPOST /api/v1/payments/confirm - Error: No such checkout session[39m
+[2026-10-31 17:20:58:2058] [[31merror[39m]: [31mPOST /api/v1/payments/confirm - Error: No such checkout session[39m
+[2026-10-31 17:20:58:2058] [[31merror[39m]: [31mPOST /api/v1/payments/confirm - Error: No such checkout session[39m
+[2026-10-31 17:21:09:219] [[31merror[39m]: [31mPOST /api/v1/payments/autopay/confirm - Error: No such checkout session[39m
+[2026-10-31 17:21:39:2139] [[31merror[39m]: [31mPUT /api/v1/payments/stripe/settings - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "That does not look like a Stripe secret key (it starts with sk_test_ or sk_live_).",[39m
+[31m    "path": [[39m
+[31m      "secretKey"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-10-31 17:44:22:4422] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-10-31 17:44:22:4422] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-10-31 17:44:23:4423] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-10-31 17:44:23:4423] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:58:38[39m
+
+[31m  55 if (!tenant) {[39m
+[31m  56   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  57   if (tenantId) {[39m
+[31m→ 58     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 05:26:14:2614] [[31merror[39m]: [31mAutopay run crashed: [39m
+[31mInvalid `prisma.tenant.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\autopay.ts:22:39[39m
+
+[31m  19 endOfToday.setUTCHours(23, 59, 59, 999);[39m
+[31m  20 const retryBefore = new Date(now.getTime() - DAY_MS);[39m
+[31m  21 [39m
+[31m→ 22 const tenants = await prisma.tenant.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/charges - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/payments/config - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/charges - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/residents/directory - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/flats - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/payments/config - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/residents/directory - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/flats - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:21:02:212] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 06:48:33:4833] [[31merror[39m]: [31mPUT /api/v1/staff/78670e10-6dad-429f-815e-bdff46859de4/leave - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid",[39m
+[31m    "path": [[39m
+[31m      "until"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-01 06:50:12:5012] [[31merror[39m]: [31mPUT /api/v1/staff/0e73f396-2051-49d3-a777-6f3d2e5e969b/leave - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid",[39m
+[31m    "path": [[39m
+[31m      "until"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-01 06:51:38:5138] [[31merror[39m]: [31mPUT /api/v1/staff/1e779ce3-ef89-4126-adad-493a4494b683/leave - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid",[39m
+[31m    "path": [[39m
+[31m      "until"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/tenancies - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/society/flats - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:28:028] [[31merror[39m]: [31mGET /api/v1/tenancies - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/society/flats - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/society/settings - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/charges - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/payments/config - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/charges - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 09:00:29:029] [[31merror[39m]: [31mGET /api/v1/payments/config - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 12:13:40:1340] [[31merror[39m]: [31mEscalation run crashed: [39m
+[31mInvalid `prisma.complaint.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\escalation.ts:106:42[39m
+
+[31m  103 [39m
+[31m  104 /** Hourly: overdue complaints go to the Secretary, and if still open a day later, to the Admin. */[39m
+[31m  105 export const runEscalations = async (now = new Date()) => {[39m
+[31m→ 106   const overdue = await prisma.complaint.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-01 12:49:48:4948] [[31merror[39m]: [31mPOST /api/v1/cameras - Error: [[39m
+[31m  {[39m
+[31m    "validation": "regex",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Use letters, numbers, dashes and underscores (for example main-gate).",[39m
+[31m    "path": [[39m
+[31m      "gatewayPath"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-01 12:49:52:4952] [[31merror[39m]: [31mPUT /api/v1/cameras/settings - Error: [[39m
+[31m  {[39m
+[31m    "validation": "url",[39m
+[31m    "code": "invalid_string",[39m
+[31m    "message": "Invalid url",[39m
+[31m    "path": [[39m
+[31m      "gatewayUrl"[39m
+[31m    ][39m
+[31m  },[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "The link must start with http:// or https://",[39m
+[31m    "path": [[39m
+[31m      "gatewayUrl"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-02 13:05:27:527] [[31merror[39m]: [31mEscalation run crashed: [39m
+[31mInvalid `prisma.complaint.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\escalation.ts:106:42[39m
+
+[31m  103 [39m
+[31m  104 /** Hourly: overdue complaints go to the Secretary, and if still open a day later, to the Admin. */[39m
+[31m  105 export const runEscalations = async (now = new Date()) => {[39m
+[31m→ 106   const overdue = await prisma.complaint.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-02 13:05:27:527] [[31merror[39m]: [31mAutopay run crashed: [39m
+[31mInvalid `prisma.tenant.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\autopay.ts:22:39[39m
+
+[31m  19 endOfToday.setUTCHours(23, 59, 59, 999);[39m
+[31m  20 const retryBefore = new Date(now.getTime() - DAY_MS);[39m
+[31m  21 [39m
+[31m→ 22 const tenants = await prisma.tenant.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-02 13:20:45:2045] [[31merror[39m]: [31mPOST /api/v1/messages/conversations/6551b4f9-9d89-4966-ac2f-13922c7f3a40/messages - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 1,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Type a message first.",[39m
+[31m    "path": [[39m
+[31m      "body"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-02 13:20:45:2045] [[31merror[39m]: [31mPOST /api/v1/messages/conversations/6551b4f9-9d89-4966-ac2f-13922c7f3a40/messages - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_big",[39m
+[31m    "maximum": 2000,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Messages can be up to 2000 characters.",[39m
+[31m    "path": [[39m
+[31m      "body"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-02 13:26:02:262] [[31merror[39m]: [31mPOST /api/v1/messages/conversations/84bfb0e0-e209-4a2f-ad20-8a6e7bc56408/messages - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 1,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Type a message first.",[39m
+[31m    "path": [[39m
+[31m      "body"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-02 13:26:02:262] [[31merror[39m]: [31mPOST /api/v1/messages/conversations/84bfb0e0-e209-4a2f-ad20-8a6e7bc56408/messages - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_big",[39m
+[31m    "maximum": 2000,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Messages can be up to 2000 characters.",[39m
+[31m    "path": [[39m
+[31m      "body"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 10:36:06:366] [[31merror[39m]: [31mAutopay run crashed: [39m
+[31mInvalid `prisma.tenant.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\autopay.ts:22:39[39m
+
+[31m  19 endOfToday.setUTCHours(23, 59, 59, 999);[39m
+[31m  20 const retryBefore = new Date(now.getTime() - DAY_MS);[39m
+[31m  21 [39m
+[31m→ 22 const tenants = await prisma.tenant.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-03 10:36:07:367] [[31merror[39m]: [31mEscalation run crashed: [39m
+[31mInvalid `prisma.complaint.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\escalation.ts:106:42[39m
+
+[31m  103 [39m
+[31m  104 /** Hourly: overdue complaints go to the Secretary, and if still open a day later, to the Admin. */[39m
+[31m  105 export const runEscalations = async (now = new Date()) => {[39m
+[31m→ 106   const overdue = await prisma.complaint.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-03 11:37:52:3752] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.notification.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\modules\notifications\notifications.routes.ts:14:27[39m
+
+[31m  11 try {[39m
+[31m  12   const where = { userId: req.user!.id };[39m
+[31m  13   const [items, unread] = await Promise.all([[39m
+[31m→ 14     prisma.notification.findMany([39m
+[31mServer has closed the connection.[39m
+[2026-11-03 11:38:08:388] [[31merror[39m]: [31mGET /api/v1/notifications - Error: [39m
+[31mInvalid `prisma.tenant.findUnique()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\middleware\tenant.ts:61:38[39m
+
+[31m  58 if (!tenant) {[39m
+[31m  59   const select = { id: true, slug: true, isActive: true } as const;[39m
+[31m  60   if (tenantId) {[39m
+[31m→ 61     tenant = await prisma.tenant.findUnique([39m
+[31mTimed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 10, connection limit: 9)[39m
+[2026-11-03 12:10:02:102] [[31merror[39m]: [31mPOST /api/v1/cameras - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "The link must start with http:// or https://",[39m
+[31m    "path": [[39m
+[31m      "streamUrl"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 12:41:37:4137] [[31merror[39m]: [31mGET /api/v1/analytics/overview - Error: [39m
+[31mInvalid `prisma.visitorLog.count()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\modules\analytics\overview.ts:85:29[39m
+
+[31m  82 if (role === 'Security Guard') {[39m
+[31m  83   const [logs, insideNow, recent] = await Promise.all([[39m
+[31m  84     prisma.visitorLog.findMany({ where: { tenantId, checkedInAt: { gte: weekAgo } }, select: { checkedInAt: true } }),[39m
+[31m→ 85     prisma.visitorLog.count([39m
+[31mError in connector: Error querying the database: FATAL: (EMAXCONNSESSION) max clients reached in session mode - max clients are limited to pool_size: 15[39m
+[2026-11-03 13:05:56:556] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: request entity too large[39m
+[2026-11-03 13:05:56:556] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)[39m
+[2026-11-03 13:06:11:611] [[31merror[39m]: [31mPOST /api/v1/auth/change-password - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "Password must contain a letter and a number.",[39m
+[31m    "path": [[39m
+[31m      "newPassword"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:06:11:611] [[31merror[39m]: [31mPOST /api/v1/auth/change-password - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "That password is too common. Choose another.",[39m
+[31m    "path": [[39m
+[31m      "newPassword"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:06:11:611] [[31merror[39m]: [31mPOST /api/v1/auth/change-password - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 8,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Password must be at least 8 characters.",[39m
+[31m    "path": [[39m
+[31m      "newPassword"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:06:15:615] [[31merror[39m]: [31mPOST /api/v1/auth/signup - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "Password must contain a letter and a number.",[39m
+[31m    "path": [[39m
+[31m      "password"[39m
+[31m    ][39m
+[31m  },[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "That password is too common. Choose another.",[39m
+[31m    "path": [[39m
+[31m      "password"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:07:00:70] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: request entity too large[39m
+[2026-11-03 13:07:00:70] [[31merror[39m]: [31mPOST /api/v1/auth/login - Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)[39m
+[2026-11-03 13:07:13:713] [[31merror[39m]: [31mPOST /api/v1/auth/change-password - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "Password must contain a letter and a number.",[39m
+[31m    "path": [[39m
+[31m      "newPassword"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:07:13:713] [[31merror[39m]: [31mPOST /api/v1/auth/change-password - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "That password is too common. Choose another.",[39m
+[31m    "path": [[39m
+[31m      "newPassword"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:07:13:713] [[31merror[39m]: [31mPOST /api/v1/auth/change-password - Error: [[39m
+[31m  {[39m
+[31m    "code": "too_small",[39m
+[31m    "minimum": 8,[39m
+[31m    "type": "string",[39m
+[31m    "inclusive": true,[39m
+[31m    "exact": false,[39m
+[31m    "message": "Password must be at least 8 characters.",[39m
+[31m    "path": [[39m
+[31m      "newPassword"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 13:07:18:718] [[31merror[39m]: [31mPOST /api/v1/auth/signup - Error: [[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "Password must contain a letter and a number.",[39m
+[31m    "path": [[39m
+[31m      "password"[39m
+[31m    ][39m
+[31m  },[39m
+[31m  {[39m
+[31m    "code": "custom",[39m
+[31m    "message": "That password is too common. Choose another.",[39m
+[31m    "path": [[39m
+[31m      "password"[39m
+[31m    ][39m
+[31m  }[39m
+[31m][39m
+[2026-11-03 18:05:29:529] [[31merror[39m]: [31mEscalation run crashed: [39m
+[31mInvalid `prisma.complaint.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\escalation.ts:106:42[39m
+
+[31m  103 [39m
+[31m  104 /** Hourly: overdue complaints go to the Secretary, and if still open a day later, to the Admin. */[39m
+[31m  105 export const runEscalations = async (now = new Date()) => {[39m
+[31m→ 106   const overdue = await prisma.complaint.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-05 12:29:22:2922] [[31merror[39m]: [31mAutopay run crashed: [39m
+[31mInvalid `prisma.tenant.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\autopay.ts:22:39[39m
+
+[31m  19 endOfToday.setUTCHours(23, 59, 59, 999);[39m
+[31m  20 const retryBefore = new Date(now.getTime() - DAY_MS);[39m
+[31m  21 [39m
+[31m→ 22 const tenants = await prisma.tenant.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m
+[2026-11-05 12:29:22:2922] [[31merror[39m]: [31mEscalation run crashed: [39m
+[31mInvalid `prisma.complaint.findMany()` invocation in[39m
+[31mC:\Users\shital\Documents\New folder\Visitor\visitorBackend\src\services\escalation.ts:106:42[39m
+
+[31m  103 [39m
+[31m  104 /** Hourly: overdue complaints go to the Secretary, and if still open a day later, to the Admin. */[39m
+[31m  105 export const runEscalations = async (now = new Date()) => {[39m
+[31m→ 106   const overdue = await prisma.complaint.findMany([39m
+[31mCan't reach database server at `aws-1-eu-west-3.pooler.supabase.com:5432`[39m
+
+[31mPlease make sure your database server is running at `aws-1-eu-west-3.pooler.supabase.com:5432`.[39m

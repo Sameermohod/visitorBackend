@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../../configs/db';
 import ApiResponse from '../../utils/apiResponse';
+import { getPagination } from '../../utils/pagination';
 
 const buildingCreateSchema = z.object({
   name: z.string().min(1),
@@ -23,7 +24,7 @@ export class SocietyController {
     try {
       const tenantId = req.tenantId!;
 
-      const society = await prisma.society.findFirst({
+      const society = await prisma.society.findFirst({ relationLoadStrategy: 'join',
         where: { tenantId, deletedAt: null },
         include: {
           buildings: {
@@ -126,7 +127,7 @@ export class SocietyController {
         });
 
         return { wing, flatsCount: createdFlats.length, flats: createdFlats };
-      });
+      }, { timeout: 20000 });
 
       return ApiResponse.success(
         res,
@@ -143,7 +144,7 @@ export class SocietyController {
   static async getFlats(req: Request, res: Response, next: NextFunction) {
     try {
       const tenantId = req.tenantId!;
-      const flats = await prisma.flat.findMany({
+      const flats = await prisma.flat.findMany({ relationLoadStrategy: 'join',
         where: { tenantId, deletedAt: null },
         include: {
           wing: {
@@ -154,10 +155,11 @@ export class SocietyController {
           residents: {
             where: { deletedAt: null },
             include: {
-              user: true,
+              user: { select: { id: true, firstName: true, lastName: true, phoneNumber: true } },
             },
           },
         },
+        ...getPagination(req),
       });
 
       return ApiResponse.success(res, flats, 'Flats fetched successfully');
@@ -173,6 +175,7 @@ export class SocietyController {
 
       const tenant = await prisma.tenant.findUnique({
         where: { id: tenantId },
+        select: { aiEnabled: true, aiProvider: true, aiApiKey: true, name: true, slug: true },
       });
 
       if (!tenant) {
@@ -185,6 +188,8 @@ export class SocietyController {
         hasApiKey: !!tenant.aiApiKey,
         name: tenant.name,
         slug: tenant.slug,
+        // false when the society office has hidden the chatbot for the signed-in person
+        chatAllowed: !req.user?.aiChatDisabled,
       }, 'Tenant settings successfully retrieved');
     } catch (error) {
       next(error);

@@ -31,4 +31,16 @@ router.post(
   ResidentController.onboard
 );
 
+/**
+ * @swagger
+ * /api/v1/residents/{residentId}/role:
+ *   patch:
+ *     summary: Appoint or remove a Society Secretary
+ */
+router.patch(
+  '/:residentId/role',
+  checkPermission('users:edit'),
+  ResidentController.changeRole
+);
+
 export default router;

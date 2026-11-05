@@ -45,4 +45,16 @@ router.patch(
   StaffController.toggleActive
 );
 
+router.put(
+  '/:staffId/leave',
+  checkPermission('staff:manage'),
+  StaffController.setLeave
+);
+
+router.delete(
+  '/:staffId/leave',
+  checkPermission('staff:manage'),
+  StaffController.clearLeave
+);
+
 export default router;

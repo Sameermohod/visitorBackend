@@ -7,6 +7,8 @@ exports.NoticeController = void 0;
 const zod_1 = require("zod");
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
+const pagination_1 = require("../../utils/pagination");
+const payments_1 = require("../../services/payments");
 const emailService_1 = require("../../utils/emailService");
 const noticeSchema = zod_1.z.object({
     title: zod_1.z.string().min(3),
@@ -30,15 +32,21 @@ class NoticeController {
                     createdBy: userId,
                 },
             });
-            // Fetch tenant details
-            const tenant = await db_1.default.tenant.findUnique({
-                where: { id: tenantId }
-            });
-            // Fetch all onboarded residents to notify them
-            const residents = await db_1.default.resident.findMany({
-                where: { tenantId, deletedAt: null },
-                include: { user: true }
-            });
+            // Show it in everyone's bell (and live, if their app is open) right away
+            db_1.default.user.findMany({ where: { tenantId, deletedAt: null, id: { not: userId }, role: { name: { not: 'Super Admin' } } }, select: { id: true } })
+                .then((people) => (0, payments_1.notifyUsers)(tenantId, people.map((p) => p.id), `📢 ${notice.title}`, notice.content.slice(0, 140), 'NOTICE'))
+                .catch((err) => console.error('Failed to notify society of notice:', err));
+            // Fetch tenant name and all onboarded residents to notify, in parallel
+            const [tenant, residents] = await Promise.all([
+                db_1.default.tenant.findUnique({
+                    where: { id: tenantId },
+                    select: { name: true },
+                }),
+                db_1.default.resident.findMany({
+                    where: { tenantId, deletedAt: null },
+                    select: { user: { select: { email: true, firstName: true } } },
+                }),
+            ]);
             // Send notice email notification to all residents
             residents.forEach((r) => {
                 if (r.user?.email) {
@@ -56,7 +64,7 @@ class NoticeController {
     static async getNotices(req, res, next) {
         try {
             const tenantId = req.tenantId;
-            const notices = await db_1.default.notice.findMany({
+            const notices = await db_1.default.notice.findMany({ relationLoadStrategy: 'join',
                 where: { tenantId, deletedAt: null },
                 include: {
                     creator: {
@@ -64,6 +72,7 @@ class NoticeController {
                     },
                 },
                 orderBy: { publishAt: 'desc' },
+                ...(0, pagination_1.getPagination)(req),
             });
             return apiResponse_1.default.success(res, notices, 'Notices fetched successfully');
         }

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuperAdminController = void 0;
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
+const tenant_1 = require("../../middleware/tenant");
+const auth_1 = require("../../middleware/auth");
 class SuperAdminController {
     // 1. Fetch all global dashboard data with filters
     static async getGlobalData(req, res, next) {
@@ -18,58 +20,89 @@ class SuperAdminController {
             const startDate = req.query.startDate;
             const endDate = req.query.endDate;
             // 1. Fetch all active tenants/societies
-            const tenants = await db_1.default.tenant.findMany({
-                where: { deletedAt: null },
-                orderBy: { name: 'asc' }
-            });
-            // 2. Fetch all users
-            const users = await db_1.default.user.findMany({
-                where: {
-                    deletedAt: null,
-                    ...(tenantId ? { tenantId } : {})
-                },
-                include: {
-                    role: true,
-                    tenant: true
-                },
-                orderBy: { createdAt: 'desc' }
-            });
-            // 3. Fetch all staff members
-            const staff = await db_1.default.staff.findMany({
-                where: {
-                    deletedAt: null,
-                    ...(tenantId ? { tenantId } : {})
-                },
-                include: {
-                    tenant: true
-                },
-                orderBy: { createdAt: 'desc' }
-            });
-            // 4. Fetch all visitor logs with date range and society filters
-            const visitorLogs = await db_1.default.visitorLog.findMany({
-                where: {
-                    ...(tenantId ? { tenantId } : {}),
-                    ...(startDate || endDate ? {
-                        checkedInAt: {
-                            ...(startDate ? { gte: new Date(startDate) } : {}),
-                            ...(endDate ? { lte: new Date(endDate) } : {})
-                        }
-                    } : {})
-                },
-                include: {
-                    tenant: true,
-                    flat: {
-                        include: {
-                            wing: {
-                                include: {
-                                    building: true
+            // The four lookups are independent, so run them in parallel.
+            // Sensitive columns (password hashes, refresh tokens, AI API keys) are never selected.
+            const tenantSummary = { select: { id: true, name: true, slug: true } };
+            const [tenants, users, staff, visitorLogs] = await Promise.all([
+                // 1. All active tenants/societies
+                db_1.default.tenant.findMany({
+                    where: { deletedAt: null },
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                        logoUrl: true,
+                        themePrimary: true,
+                        themeSecondary: true,
+                        subscriptionId: true,
+                        subscriptionStatus: true,
+                        trialEndsAt: true,
+                        isActive: true,
+                        aiEnabled: true,
+                        aiProvider: true,
+                        createdAt: true,
+                    },
+                    orderBy: { name: 'asc' }
+                }),
+                // 2. All users
+                db_1.default.user.findMany({ relationLoadStrategy: 'join',
+                    where: {
+                        deletedAt: null,
+                        ...(tenantId ? { tenantId } : {})
+                    },
+                    select: {
+                        id: true,
+                        tenantId: true,
+                        email: true,
+                        firstName: true,
+                        lastName: true,
+                        phoneNumber: true,
+                        isVerified: true,
+                        createdAt: true,
+                        role: { select: { id: true, name: true } },
+                        tenant: tenantSummary
+                    },
+                    orderBy: { createdAt: 'desc' }
+                }),
+                // 3. All staff members
+                db_1.default.staff.findMany({ relationLoadStrategy: 'join',
+                    where: {
+                        deletedAt: null,
+                        ...(tenantId ? { tenantId } : {})
+                    },
+                    include: {
+                        tenant: tenantSummary
+                    },
+                    orderBy: { createdAt: 'desc' }
+                }),
+                // 4. Visitor logs with date range and society filters (most recent 1000)
+                db_1.default.visitorLog.findMany({ relationLoadStrategy: 'join',
+                    where: {
+                        ...(tenantId ? { tenantId } : {}),
+                        ...(startDate || endDate ? {
+                            checkedInAt: {
+                                ...(startDate ? { gte: new Date(startDate) } : {}),
+                                ...(endDate ? { lte: new Date(endDate) } : {})
+                            }
+                        } : {})
+                    },
+                    include: {
+                        visitor: { select: { name: true, visitorType: true, vehicleNumber: true, company: true } },
+                        tenant: tenantSummary,
+                        flat: {
+                            include: {
+                                wing: {
+                                    include: {
+                                        building: true
+                                    }
                                 }
                             }
                         }
-                    }
-                },
-                orderBy: { checkedInAt: 'desc' }
-            });
+                    },
+                    orderBy: { checkedInAt: 'desc' },
+                    take: 1000
+                })
+            ]);
             return apiResponse_1.default.success(res, {
                 tenants,
                 users,
@@ -103,6 +136,7 @@ class SuperAdminController {
                 where: { id },
                 data: { isActive }
             });
+            tenant_1.tenantCache.clear();
             return apiResponse_1.default.success(res, updatedTenant, `Tenant/Society "${updatedTenant.name}" has been ${isActive ? 'activated' : 'deactivated'} successfully.`);
         }
         catch (error) {
@@ -131,6 +165,7 @@ class SuperAdminController {
                     isActive: false
                 }
             });
+            tenant_1.tenantCache.clear();
             return apiResponse_1.default.success(res, updatedTenant, `Tenant/Society "${updatedTenant.name}" has been deleted successfully.`);
         }
         catch (error) {
@@ -156,6 +191,7 @@ class SuperAdminController {
                 where: { id },
                 data: { deletedAt: new Date() }
             });
+            auth_1.userCache.invalidate(id);
             return apiResponse_1.default.success(res, null, 'User deleted successfully.');
         }
         catch (error) {

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNoticePublishedTemplate = exports.getPaymentSuccessTemplate = exports.getInvoiceGeneratedTemplate = exports.getComplaintUpdateTemplate = exports.getVisitorGateAlertTemplate = exports.getStaffOnboardTemplate = exports.getResidentOnboardTemplate = exports.getAdminOnboardTemplate = exports.sendEmail = void 0;
+exports.getAutopayFailedTemplate = exports.getChargeNoticeTemplate = exports.getNoticePublishedTemplate = exports.getPaymentSuccessTemplate = exports.getInvoiceGeneratedTemplate = exports.getComplaintUpdateTemplate = exports.getVisitorGateAlertTemplate = exports.getStaffOnboardTemplate = exports.getResidentOnboardTemplate = exports.getAdminOnboardTemplate = exports.sendEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const logger_1 = __importDefault(require("../configs/logger"));
 // Dynamic SMTP configuration
@@ -74,18 +74,25 @@ exports.getAdminOnboardTemplate = getAdminOnboardTemplate;
 /**
  * 2. Onboard template for Residents flat owners
  */
-const getResidentOnboardTemplate = (firstName, lastName, tenantName, tenantSlug, email) => {
+const getResidentOnboardTemplate = (firstName, lastName, tenantName, tenantSlug, email, tempPassword = 'welcome123') => {
+    const passwordRows = tempPassword
+        ? `<tr><td style="padding: 10px; color: #94a3b8;"><strong>Temporary Password:</strong></td><td style="padding: 10px; color: #f8fafc;">${tempPassword}</td></tr>`
+        : `<tr><td style="padding: 10px; color: #94a3b8;"><strong>Password:</strong></td><td style="padding: 10px; color: #f8fafc;">Use your existing password</td></tr>`;
+    const changeNotice = tempPassword
+        ? `<p style="margin-top: 20px; padding: 12px 14px; background: rgba(245,158,11,0.12); border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 14px; line-height: 1.6; color: #fde68a;"><strong>Please change this password.</strong> It is only temporary. After you sign in, you will be asked to choose your own password. You can also do it any time from the menu: Change password.</p>`
+        : '';
     return `
   <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
     <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">Welcome to Your New Home! 🔑</h2>
     <p>Dear ${firstName} ${lastName},</p>
     <p>You have been officially onboarded as a Resident occupant in <strong>${tenantName}</strong>.</p>
-    <p>Your secure access profile has been created. Please log in using the temporary credentials below:</p>
+    <p>Your secure access profile has been created. Please log in using the credentials below:</p>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
       <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Workspace Slug:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${tenantSlug}</strong></td></tr>
       <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Access Email:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);">${email}</td></tr>
-      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Temporary Password:</strong></td><td style="padding: 10px; color: #f8fafc;">welcome123</td></tr>
+      ${passwordRows}
     </table>
+    ${changeNotice}
     <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">Log in to file complaints with AI categorization, download QR gate passes, and pay maintenance invoices using ourUPI sandboxes.</p>
     <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Helpdesk & Identity System</p>
   </div>
@@ -95,7 +102,7 @@ exports.getResidentOnboardTemplate = getResidentOnboardTemplate;
 /**
  * 3. Onboard template for service staff and guards
  */
-const getStaffOnboardTemplate = (firstName, lastName, type, tenantName, tenantSlug, email) => {
+const getStaffOnboardTemplate = (firstName, lastName, type, tenantName, tenantSlug, email, tempPassword = 'welcome123') => {
     return `
   <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto; border: 1px border-white/5;">
     <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">Staff Profile Configured 🛠️</h2>
@@ -105,8 +112,9 @@ const getStaffOnboardTemplate = (firstName, lastName, type, tenantName, tenantSl
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
       <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Workspace Slug:</strong></td><td style="padding: 10px; color: #10b981; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>${tenantSlug}</strong></td></tr>
       <tr><td style="padding: 10px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05);"><strong>Login Email:</strong></td><td style="padding: 10px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05);">${email}</td></tr>
-      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Temporary Password:</strong></td><td style="padding: 10px; color: #f8fafc;">welcome123</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Temporary Password:</strong></td><td style="padding: 10px; color: #f8fafc;">${tempPassword}</td></tr>
     </table>
+    <p style="margin-top: 20px; padding: 12px 14px; background: rgba(245,158,11,0.12); border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 14px; line-height: 1.6; color: #fde68a;"><strong>Please change this password.</strong> It is only temporary. After you sign in, you will be asked to choose your own password. You can also do it any time from the menu: Change password.</p>
     <p style="margin-top: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">You can now log in to verify guest QR gate passes, check-in visitors, or update and comment on complaints assigned to your department.</p>
     <p style="margin-top: 25px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 15px;">SaaS Society Infrastructure System</p>
   </div>
@@ -219,3 +227,39 @@ const getNoticePublishedTemplate = (recipientName, noticeTitle, noticeContent, c
   `;
 };
 exports.getNoticePublishedTemplate = getNoticePublishedTemplate;
+/**
+ * Charge notice (maintenance / function fee) or reminder, with a link to the pay screen.
+ */
+const getChargeNoticeTemplate = (firstName, societyName, title, description, amountText, dueDate, payUrl, reminder = false) => {
+    return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #10b981; margin-bottom: 20px; text-align: center;">${reminder ? 'Payment reminder' : 'New charge'} · ${societyName}</h2>
+    <p>Hello ${firstName},</p>
+    <p>${reminder ? 'This is a reminder that the following is still unpaid:' : 'A new charge has been issued for your flat:'}</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>For:</strong></td><td style="padding: 10px;">${title}</td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Amount:</strong></td><td style="padding: 10px; color: #10b981;"><strong>${amountText}</strong></td></tr>
+      <tr><td style="padding: 10px; color: #94a3b8;"><strong>Due date:</strong></td><td style="padding: 10px;">${dueDate}</td></tr>
+    </table>
+    ${description ? `<p style="margin-top: 16px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">${description}</p>` : ''}
+    <p style="margin-top: 24px; text-align: center;"><a href="${payUrl}" style="display: inline-block; background: #10b981; color: #052e1f; padding: 12px 26px; border-radius: 10px; text-decoration: none; font-weight: bold;">View and pay</a></p>
+    <p style="margin-top: 16px; font-size: 13px; color: #94a3b8; text-align: center;">You can also scan the QR code on the society notice board, and you can turn on Autopay in the Bills section.</p>
+  </div>
+  `;
+};
+exports.getChargeNoticeTemplate = getChargeNoticeTemplate;
+/**
+ * Autopay could not charge the saved card.
+ */
+const getAutopayFailedTemplate = (firstName, title, amountText, reason, payUrl) => {
+    return `
+  <div style="font-family: sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #f59e0b; margin-bottom: 20px; text-align: center;">Autopay could not be completed</h2>
+    <p>Hello ${firstName},</p>
+    <p>We tried to charge your saved card for <strong>${title}</strong> (${amountText}) but it did not go through.</p>
+    <p style="padding: 12px 14px; background: rgba(245,158,11,0.12); border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 14px; color: #fde68a;">${reason}</p>
+    <p style="margin-top: 24px; text-align: center;"><a href="${payUrl}" style="display: inline-block; background: #10b981; color: #052e1f; padding: 12px 26px; border-radius: 10px; text-decoration: none; font-weight: bold;">Pay now</a></p>
+  </div>
+  `;
+};
+exports.getAutopayFailedTemplate = getAutopayFailedTemplate;

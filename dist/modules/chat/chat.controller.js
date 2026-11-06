@@ -23,6 +23,10 @@ class ChatController {
             const userId = req.user.id;
             const userRole = req.user.role;
             const { message, history } = chatMessageSchema.parse(req.body);
+            // The Admin/Secretary can switch the chatbot off for a particular person
+            if (req.user.aiChatDisabled) {
+                return apiResponse_1.default.error(res, 'The chatbot has been turned off for your account by the society office.', null, 403);
+            }
             // 1. Fetch Tenant settings to check AI eligibility
             const tenant = await db_1.default.tenant.findUnique({
                 where: { id: tenantId },
@@ -140,7 +144,7 @@ class ChatController {
                         else if (userRole === 'Maintenance Staff') {
                             complaintsWhereClause.assignedTo = userId;
                         }
-                        else if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
+                        else if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
                             return { error: 'Access denied: unauthorized.' };
                         }
                         const complaints = await db_1.default.complaint.findMany({
@@ -158,7 +162,7 @@ class ChatController {
                         });
                         return complaints;
                     case 'get_residents_directory':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Accountant') {
                             return { error: 'Access denied: administrative permissions required.' };
                         }
                         const allResidents = await db_1.default.resident.findMany({
@@ -180,7 +184,7 @@ class ChatController {
                             status: r.ownershipStatus,
                         }));
                     case 'get_visitor_logs':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Security Guard' && userRole !== 'Committee Member') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Security Guard' && userRole !== 'Committee Member') {
                             return { error: 'Access denied: unauthorized.' };
                         }
                         const logs = await db_1.default.visitorLog.findMany({
@@ -200,7 +204,7 @@ class ChatController {
                             checkOut: l.checkedOutAt || 'Still inside',
                         }));
                     case 'get_complaints':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
                             return { error: 'Access denied: administrative permissions required.' };
                         }
                         const allComplaints = await db_1.default.complaint.findMany({
@@ -220,7 +224,7 @@ class ChatController {
                             createdAt: c.createdAt,
                         }));
                     case 'get_billing_summary':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin') {
                             return { error: 'Access denied: society administrator role required. Supervisor and other roles are restricted.' };
                         }
                         const invoices = await db_1.default.maintenanceInvoice.findMany({
@@ -236,7 +240,7 @@ class ChatController {
                             unpaidCount: invoices.filter((i) => i.status === 'UNPAID').length,
                         };
                     case 'get_staff':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
                             return { error: 'Access denied: unauthorized.' };
                         }
                         const staff = await db_1.default.staff.findMany({
@@ -252,7 +256,7 @@ class ChatController {
                         });
                         return staff;
                     case 'search_directory':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
                             return { error: 'Access denied: directory search restricted.' };
                         }
                         const searchQuery = args.query || '';
@@ -331,7 +335,7 @@ class ChatController {
                             })),
                         };
                     case 'get_user_details':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
                             return { error: 'Access denied: unauthorized.' };
                         }
                         const targetId = args.userId;
@@ -423,7 +427,7 @@ class ChatController {
                                 role: staffDetails.type,
                                 shiftStart: staffDetails.shiftStart,
                                 shiftEnd: staffDetails.shiftEnd,
-                                salaryMonthly: userRole === 'Society Admin' || userRole === 'Super Admin' ? Number(staffDetails.salaryMonthly || 0) : 'Hidden',
+                                salaryMonthly: userRole === 'Society Admin' || userRole === 'Society Secretary' || userRole === 'Super Admin' ? Number(staffDetails.salaryMonthly || 0) : 'Hidden',
                                 onboardedAt: staffDetails.createdAt,
                                 linkedUser: staffDetails.user ? {
                                     email: staffDetails.user.email,
@@ -432,7 +436,7 @@ class ChatController {
                             };
                         }
                     case 'verify_vehicle':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member' && userRole !== 'Security Guard') {
                             return { error: 'Access denied: unauthorized.' };
                         }
                         const targetPlate = args.plateNumber || '';
@@ -460,7 +464,7 @@ class ChatController {
                             flat: vehicle.flat?.number || 'N/A'
                         } : { message: 'Vehicle not registered in the society directory.' };
                     case 'get_staff_attendance':
-                        if (userRole !== 'Society Admin' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
+                        if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin' && userRole !== 'Committee Member') {
                             return { error: 'Access denied: administrative permissions required.' };
                         }
                         const attendance = await db_1.default.staffAttendance.findMany({

@@ -26,7 +26,8 @@ router.post('/raise', (0, auth_1.checkPermission)('complaints:create'), complain
  *   post:
  *     summary: Society admin assigns technician staff
  */
-router.post('/:complaintId/assign', (0, auth_1.checkPermission)('complaints:resolve'), complaint_controller_1.ComplaintController.assignStaff);
+router.post('/:complaintId/assign', (0, auth_1.checkPermission)('complaints:resolve'), // the controller further limits this to Admin, Secretary and Committee
+complaint_controller_1.ComplaintController.assignStaff);
 /**
  * @swagger
  * /api/v1/complaints/:complaintId/status:
@@ -40,5 +41,7 @@ router.patch('/:complaintId/status', (0, auth_1.checkPermission)('complaints:res
  *   post:
  *     summary: Add note or update comment
  */
+router.post('/:complaintId/escalate', (0, auth_1.checkPermission)('complaints:view'), // the controller decides who may escalate and when
+complaint_controller_1.ComplaintController.escalate);
 router.post('/:complaintId/comments', (0, auth_1.checkPermission)('complaints:view'), complaint_controller_1.ComplaintController.addComment);
 exports.default = router;

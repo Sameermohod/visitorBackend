@@ -5221,3 +5221,24 @@
 [2026-11-05 14:47:53:4753] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
 [2026-11-05 14:47:53:4753] [[32minfo[39m]: [32mAutopay scheduler started (checks every 6 hours).[39m
 [2026-11-05 14:47:53:4753] [[32minfo[39m]: [32mEscalation scheduler started (checks every hour).[39m
+[2026-11-06 12:57:56:5756] [[33mwarn[39m]: [33mJWT_ACCESS_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-06 12:57:56:5756] [[33mwarn[39m]: [33mJWT_REFRESH_SECRET is short or looks like a placeholder. Set it to a random string of 32+ characters (for example: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))").[39m
+[2026-11-06 12:57:56:5756] [[32minfo[39m]: [32mRealtime: Socket.IO ready[39m
+[2026-11-06 12:57:56:5756] [[32minfo[39m]: [32m🚀 Server running on http://localhost:5000[39m
+[2026-11-06 12:57:56:5756] [[32minfo[39m]: [32m📖 API Docs available at http://localhost:5000/api-docs[39m
+[2026-11-06 12:57:56:5756] [[32minfo[39m]: [32mAutopay scheduler started (checks every 6 hours).[39m
+[2026-11-06 12:57:56:5756] [[32minfo[39m]: [32mEscalation scheduler started (checks every hour).[39m
+[2026-11-06 12:59:02:592] [[32minfo[39m]: [32mAuth: User shital@ideas2goal.com logged in successfully.[39m
+[2026-11-06 12:59:02:592] [[35mhttp[39m]: [35m[0mPOST /api/v1/auth/login [32m200[0m 1065.912 ms - -[0m[39m
+[2026-11-06 12:59:03:593] [[35mhttp[39m]: [35m[0mGET /api/v1/society/settings [32m200[0m 1019.462 ms - 188[0m[39m
+[2026-11-06 12:59:03:593] [[35mhttp[39m]: [35m[0mGET /api/v1/society/settings [32m200[0m 0.954 ms - 188[0m[39m
+[2026-11-06 12:59:03:593] [[35mhttp[39m]: [35m[0mGET /api/v1/society/settings [32m200[0m 0.934 ms - 188[0m[39m
+[2026-11-06 12:59:03:593] [[35mhttp[39m]: [35m[0mGET /api/v1/society/settings [32m200[0m 0.580 ms - 188[0m[39m
+[2026-11-06 12:59:05:595] [[35mhttp[39m]: [35m[0mGET /api/v1/notifications [32m200[0m 2632.448 ms - 80[0m[39m
+[2026-11-06 12:59:05:595] [[35mhttp[39m]: [35m[0mGET /api/v1/notifications [32m200[0m 0.876 ms - 80[0m[39m
+[2026-11-06 12:59:05:595] [[35mhttp[39m]: [35m[0mGET /api/v1/notifications [32m200[0m 0.528 ms - 80[0m[39m
+[2026-11-06 12:59:05:595] [[35mhttp[39m]: [35m[0mGET /api/v1/notifications [32m200[0m 1.209 ms - 80[0m[39m
+[2026-11-06 12:59:05:595] [[35mhttp[39m]: [35m[0mGET /api/v1/analytics/dashboard [32m200[0m 2664.879 ms - 267[0m[39m
+[2026-11-06 12:59:05:595] [[35mhttp[39m]: [35m[0mGET /api/v1/analytics/dashboard [32m200[0m 0.571 ms - 267[0m[39m
+[2026-11-06 12:59:06:596] [[35mhttp[39m]: [35m[0mGET /api/v1/analytics/overview [32m200[0m 3454.023 ms - 456[0m[39m
+[2026-11-06 12:59:06:596] [[35mhttp[39m]: [35m[0mGET /api/v1/analytics/overview [32m200[0m 0.407 ms - 456[0m[39m

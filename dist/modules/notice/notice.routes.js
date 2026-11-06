@@ -19,5 +19,5 @@ router.get('/', notice_controller_1.NoticeController.getNotices);
  *   post:
  *     summary: Create and publish notice announcement
  */
-router.post('/', notice_controller_1.NoticeController.createNotice);
+router.post('/', (0, auth_1.checkPermission)('notices:manage'), notice_controller_1.NoticeController.createNotice);
 exports.default = router;

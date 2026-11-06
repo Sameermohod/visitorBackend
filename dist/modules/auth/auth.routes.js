@@ -34,4 +34,18 @@ router.post('/refresh', auth_controller_1.AuthController.refresh);
  *     summary: Expire refresh session
  */
 router.post('/logout', auth_1.authenticate, auth_controller_1.AuthController.logout);
+/**
+ * @swagger
+ * /api/v1/auth/change-password:
+ *   post:
+ *     summary: Change own password
+ */
+router.post('/change-password', auth_1.authenticate, auth_controller_1.AuthController.changePassword);
+/**
+ * @swagger
+ * /api/v1/auth/mcp-token:
+ *   post:
+ *     summary: Create a long-lived token to connect an AI app (MCP)
+ */
+router.post('/mcp-token', auth_1.authenticate, auth_controller_1.AuthController.createMcpToken);
 exports.default = router;

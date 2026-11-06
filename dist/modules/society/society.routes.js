@@ -33,7 +33,8 @@ router.post('/flats/batch', (0, auth_1.checkPermission)('society:manage'), socie
  *   get:
  *     summary: Get simple flat lists
  */
-router.get('/flats', society_controller_1.SocietyController.getFlats);
+// Lists every resident of every flat, so only roles that run the society or the gate may call it
+router.get('/flats', (0, auth_1.checkAnyPermission)('residents:view', 'visitors:gate'), society_controller_1.SocietyController.getFlats);
 /**
  * @swagger
  * /api/v1/society/settings:

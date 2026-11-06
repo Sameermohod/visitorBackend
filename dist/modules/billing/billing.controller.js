@@ -8,6 +8,7 @@ const zod_1 = require("zod");
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
 const logger_1 = __importDefault(require("../../configs/logger"));
+const pagination_1 = require("../../utils/pagination");
 const emailService_1 = require("../../utils/emailService");
 const generateBillSchema = zod_1.z.object({
     periodStart: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // "YYYY-MM-DD"
@@ -29,24 +30,24 @@ class BillingController {
             logger_1.default.info(`Billing: Invoking DB procedure_generate_monthly_bills for tenant: ${tenantId}`);
             // Execute SQL Procedure
             await db_1.default.$executeRawUnsafe(`CALL procedure_generate_monthly_bills($1::uuid, $2::date, $3::date, $4::numeric, $5::numeric)`, tenantId, new Date(data.periodStart), new Date(data.periodEnd), data.baseAmount, data.gstRate);
-            // Verify generated count
-            const generated = await db_1.default.maintenanceInvoice.count({
-                where: { tenantId, billPeriodStart: new Date(data.periodStart) },
-            });
-            // Query generated invoices to trigger emails to residents
+            // Query generated invoices to trigger emails to residents (its length is the generated count)
             const invoices = await db_1.default.maintenanceInvoice.findMany({
                 where: { tenantId, billPeriodStart: new Date(data.periodStart), deletedAt: null },
-                include: {
+                select: {
+                    invoiceNumber: true,
+                    totalAmount: true,
+                    dueDate: true,
                     flat: {
-                        include: {
+                        select: {
                             residents: {
                                 where: { deletedAt: null },
-                                include: { user: true }
+                                select: { user: { select: { email: true, firstName: true } } },
                             }
                         }
                     }
                 }
             });
+            const generated = invoices.length;
             // Trigger email notifications
             invoices.forEach((inv) => {
                 const residents = inv.flat?.residents || [];
@@ -69,10 +70,20 @@ class BillingController {
         try {
             const tenantId = req.tenantId;
             const status = req.query.status;
-            const invoices = await db_1.default.maintenanceInvoice.findMany({
+            // A resident only ever sees the bills of their own flat(s), never the whole society
+            let ownFlatIds = null;
+            if (req.user.role === 'Resident') {
+                const mine = await db_1.default.resident.findMany({
+                    where: { tenantId, userId: req.user.id, deletedAt: null, flatId: { not: null } },
+                    select: { flatId: true },
+                });
+                ownFlatIds = mine.map((r) => r.flatId);
+            }
+            const invoices = await db_1.default.maintenanceInvoice.findMany({ relationLoadStrategy: 'join',
                 where: {
                     tenantId,
                     deletedAt: null,
+                    ...(ownFlatIds ? { flatId: { in: ownFlatIds } } : {}),
                     ...(status ? { status: status } : {}),
                 },
                 include: {
@@ -87,7 +98,7 @@ class BillingController {
                     },
                 },
                 orderBy: { dueDate: 'desc' },
-            });
+                ...(0, pagination_1.getPagination)(req), });
             return apiResponse_1.default.success(res, invoices, 'Invoices loaded successfully');
         }
         catch (error) {
@@ -99,6 +110,11 @@ class BillingController {
         try {
             const tenantId = req.tenantId;
             const userId = req.user.id;
+            // This endpoint records a payment without any proof of payment. Real payments go through Stripe
+            // (/payments/checkout) and offline payments through /charges/invoices/:id/record-payment.
+            if (process.env.ALLOW_DEMO_PAYMENTS !== 'true') {
+                return apiResponse_1.default.error(res, 'Demo payments are switched off. Pay online, or ask the society office to record your payment.', null, 403);
+            }
             const data = payBillSchema.parse(req.body);
             const invoice = await db_1.default.maintenanceInvoice.findUnique({
                 where: { id: data.invoiceId, tenantId, deletedAt: null },

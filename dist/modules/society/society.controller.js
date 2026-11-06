@@ -7,6 +7,7 @@ exports.SocietyController = void 0;
 const zod_1 = require("zod");
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
+const pagination_1 = require("../../utils/pagination");
 const buildingCreateSchema = zod_1.z.object({
     name: zod_1.z.string().min(1),
     wingsCount: zod_1.z.number().int().min(1).default(1),
@@ -24,7 +25,7 @@ class SocietyController {
     static async getSociety(req, res, next) {
         try {
             const tenantId = req.tenantId;
-            const society = await db_1.default.society.findFirst({
+            const society = await db_1.default.society.findFirst({ relationLoadStrategy: 'join',
                 where: { tenantId, deletedAt: null },
                 include: {
                     buildings: {
@@ -115,7 +116,7 @@ class SocietyController {
                     where: { wingId: wing.id },
                 });
                 return { wing, flatsCount: createdFlats.length, flats: createdFlats };
-            });
+            }, { timeout: 20000 });
             return apiResponse_1.default.success(res, result, `Successfully generated Wing ${data.wingName} containing ${result.flatsCount} flats.`, 201);
         }
         catch (error) {
@@ -126,7 +127,7 @@ class SocietyController {
     static async getFlats(req, res, next) {
         try {
             const tenantId = req.tenantId;
-            const flats = await db_1.default.flat.findMany({
+            const flats = await db_1.default.flat.findMany({ relationLoadStrategy: 'join',
                 where: { tenantId, deletedAt: null },
                 include: {
                     wing: {
@@ -137,10 +138,11 @@ class SocietyController {
                     residents: {
                         where: { deletedAt: null },
                         include: {
-                            user: true,
+                            user: { select: { id: true, firstName: true, lastName: true, phoneNumber: true } },
                         },
                     },
                 },
+                ...(0, pagination_1.getPagination)(req),
             });
             return apiResponse_1.default.success(res, flats, 'Flats fetched successfully');
         }
@@ -154,6 +156,7 @@ class SocietyController {
             const tenantId = req.tenantId;
             const tenant = await db_1.default.tenant.findUnique({
                 where: { id: tenantId },
+                select: { aiEnabled: true, aiProvider: true, aiApiKey: true, name: true, slug: true },
             });
             if (!tenant) {
                 return apiResponse_1.default.error(res, 'Tenant workspace not found.', null, 404);
@@ -164,6 +167,8 @@ class SocietyController {
                 hasApiKey: !!tenant.aiApiKey,
                 name: tenant.name,
                 slug: tenant.slug,
+                // false when the society office has hidden the chatbot for the signed-in person
+                chatAllowed: !req.user?.aiChatDisabled,
             }, 'Tenant settings successfully retrieved');
         }
         catch (error) {

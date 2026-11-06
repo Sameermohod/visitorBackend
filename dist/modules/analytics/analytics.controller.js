@@ -14,15 +14,25 @@ class AnalyticsController {
             const tenantId = req.tenantId;
             // 1. Super Admin View (Multi-Tenant SaaS Overview)
             if (userRole === 'Super Admin') {
-                const totalTenants = await db_1.default.tenant.count({ where: { deletedAt: null } });
-                const activeTenants = await db_1.default.tenant.count({ where: { isActive: true, deletedAt: null } });
-                const subscriptions = await db_1.default.subscription.findMany();
-                const tenantsDetails = await db_1.default.tenant.findMany({
-                    where: { deletedAt: null },
-                    include: {
-                        subscription: true,
-                    },
-                });
+                const [totalTenants, activeTenants, subscriptions, tenantsDetails] = await Promise.all([
+                    db_1.default.tenant.count({ where: { deletedAt: null } }),
+                    db_1.default.tenant.count({ where: { isActive: true, deletedAt: null } }),
+                    db_1.default.subscription.findMany(),
+                    db_1.default.tenant.findMany({
+                        where: { deletedAt: null },
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            themePrimary: true,
+                            themeSecondary: true,
+                            isActive: true,
+                            subscriptionStatus: true,
+                            createdAt: true,
+                            subscription: true,
+                        },
+                    }),
+                ]);
                 return apiResponse_1.default.success(res, {
                     view: 'SUPER_ADMIN',
                     stats: {
@@ -35,24 +45,21 @@ class AnalyticsController {
                 }, 'Super admin analytics loaded');
             }
             // 2. Society Admin / Committee View (Single-Tenant Overview)
-            if (userRole === 'Society Admin' || userRole === 'Committee Member' || userRole === 'Accountant') {
-                const totalResidents = await db_1.default.resident.count({ where: { tenantId, deletedAt: null } });
-                const totalGuards = await db_1.default.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } });
-                const openComplaints = await db_1.default.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } });
-                const resolvedComplaints = await db_1.default.complaint.count({ where: { tenantId, status: 'RESOLVED', deletedAt: null } });
-                const visitorsToday = await db_1.default.visitorLog.count({
-                    where: {
-                        tenantId,
-                        checkedInAt: {
-                            gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                        },
-                    },
-                });
-                // Financial collection ratios
-                const aggregateInvoice = await db_1.default.maintenanceInvoice.aggregate({
-                    where: { tenantId, deletedAt: null },
-                    _sum: { totalAmount: true, paidAmount: true },
-                });
+            if (userRole === 'Society Admin' || userRole === 'Society Secretary' || userRole === 'Committee Member' || userRole === 'Accountant') {
+                const [totalResidents, totalGuards, openComplaints, resolvedComplaints, visitorsToday, aggregateInvoice,] = await Promise.all([
+                    db_1.default.resident.count({ where: { tenantId, deletedAt: null } }),
+                    db_1.default.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } }),
+                    db_1.default.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } }),
+                    db_1.default.complaint.count({ where: { tenantId, status: 'RESOLVED', deletedAt: null } }),
+                    db_1.default.visitorLog.count({
+                        where: { tenantId, checkedInAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+                    }),
+                    // Financial collection ratios
+                    db_1.default.maintenanceInvoice.aggregate({
+                        where: { tenantId, deletedAt: null },
+                        _sum: { totalAmount: true, paidAmount: true },
+                    }),
+                ]);
                 const totalBilled = Number(aggregateInvoice._sum.totalAmount || 0);
                 const totalCollected = Number(aggregateInvoice._sum.paidAmount || 0);
                 return apiResponse_1.default.success(res, {
@@ -73,17 +80,14 @@ class AnalyticsController {
             }
             // 3. Supervisor View (Staff coordination dashboard)
             if (userRole === 'Supervisor') {
-                const totalResidents = await db_1.default.resident.count({ where: { tenantId, deletedAt: null } });
-                const totalGuards = await db_1.default.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } });
-                const openComplaints = await db_1.default.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } });
-                const visitorsToday = await db_1.default.visitorLog.count({
-                    where: {
-                        tenantId,
-                        checkedInAt: {
-                            gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                        },
-                    },
-                });
+                const [totalResidents, totalGuards, openComplaints, visitorsToday] = await Promise.all([
+                    db_1.default.resident.count({ where: { tenantId, deletedAt: null } }),
+                    db_1.default.staff.count({ where: { tenantId, type: 'Guard', deletedAt: null } }),
+                    db_1.default.complaint.count({ where: { tenantId, status: 'OPEN', deletedAt: null } }),
+                    db_1.default.visitorLog.count({
+                        where: { tenantId, checkedInAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+                    }),
+                ]);
                 return apiResponse_1.default.success(res, {
                     view: 'SUPERVISOR',
                     stats: {
@@ -132,22 +136,24 @@ class AnalyticsController {
                 }, 'Staff dashboard analytics loaded');
             }
             // 6. Resident View (Personalized flat details)
-            const resident = await db_1.default.resident.findFirst({
+            const resident = await db_1.default.resident.findFirst({ relationLoadStrategy: 'join',
                 where: { userId: req.user.id, tenantId, deletedAt: null },
-                include: { flat: true },
-            });
+                include: { flat: true }, });
             if (!resident) {
                 return apiResponse_1.default.error(res, 'Resident profile not found', null, 404);
             }
-            const personalComplaints = await db_1.default.complaint.count({
-                where: { raisedBy: req.user.id, tenantId, deletedAt: null },
-            });
-            const personalPendingBills = await db_1.default.maintenanceInvoice.count({
-                where: { flatId: resident.flatId || '', tenantId, status: { in: ['UNPAID', 'PARTIALLY_PAID'] }, deletedAt: null },
-            });
-            const visitorPasses = await db_1.default.visitor.count({
-                where: { preApprovedBy: resident.id, tenantId },
-            });
+            const [personalComplaints, personalPendingBills, visitorPasses] = await Promise.all([
+                db_1.default.complaint.count({
+                    where: { raisedBy: req.user.id, tenantId, deletedAt: null },
+                }),
+                // A renter never sees the society's bills for the flat
+                userRole === 'Tenant' ? Promise.resolve(0) : db_1.default.maintenanceInvoice.count({
+                    where: { flatId: resident.flatId || '', tenantId, status: { in: ['UNPAID', 'PARTIALLY_PAID'] }, deletedAt: null },
+                }),
+                db_1.default.visitor.count({
+                    where: { preApprovedBy: resident.id, tenantId },
+                }),
+            ]);
             return apiResponse_1.default.success(res, {
                 view: 'RESIDENT',
                 flatDetails: resident.flat,

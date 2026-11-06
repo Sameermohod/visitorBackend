@@ -29,4 +29,6 @@ router.get('/directory', (req, res, next) => {
  */
 router.post('/onboard', (0, auth_1.checkPermission)('staff:manage'), staff_controller_1.StaffController.onboard);
 router.patch('/:staffId/status', (0, auth_1.checkPermission)('staff:manage'), staff_controller_1.StaffController.toggleActive);
+router.put('/:staffId/leave', (0, auth_1.checkPermission)('staff:manage'), staff_controller_1.StaffController.setLeave);
+router.delete('/:staffId/leave', (0, auth_1.checkPermission)('staff:manage'), staff_controller_1.StaffController.clearLeave);
 exports.default = router;

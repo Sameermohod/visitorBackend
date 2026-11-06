@@ -15,6 +15,14 @@ const analytics_routes_1 = __importDefault(require("../modules/analytics/analyti
 const staff_routes_1 = __importDefault(require("../modules/staff/staff.routes"));
 const chat_routes_1 = __importDefault(require("../modules/chat/chat.routes"));
 const super_admin_routes_1 = __importDefault(require("../modules/super-admin/super-admin.routes"));
+const charges_routes_1 = __importDefault(require("../modules/charges/charges.routes"));
+const payments_routes_1 = __importDefault(require("../modules/payments/payments.routes"));
+const notifications_routes_1 = __importDefault(require("../modules/notifications/notifications.routes"));
+const users_routes_1 = __importDefault(require("../modules/users/users.routes"));
+const tenancy_routes_1 = __importDefault(require("../modules/tenancy/tenancy.routes"));
+const cameras_routes_1 = __importDefault(require("../modules/cameras/cameras.routes"));
+const messages_routes_1 = __importDefault(require("../modules/messages/messages.routes"));
+const safety_routes_1 = __importDefault(require("../modules/safety/safety.routes"));
 const apiResponse_1 = __importDefault(require("../utils/apiResponse"));
 const router = (0, express_1.Router)();
 // Version 1 Health Check
@@ -33,4 +41,12 @@ router.use('/analytics', analytics_routes_1.default);
 router.use('/staff', staff_routes_1.default);
 router.use('/chat', chat_routes_1.default);
 router.use('/super-admin', super_admin_routes_1.default);
+router.use('/charges', charges_routes_1.default);
+router.use('/payments', payments_routes_1.default);
+router.use('/notifications', notifications_routes_1.default);
+router.use('/users', users_routes_1.default);
+router.use('/tenancies', tenancy_routes_1.default);
+router.use('/cameras', cameras_routes_1.default);
+router.use('/messages', messages_routes_1.default);
+router.use('/safety', safety_routes_1.default);
 exports.default = router;

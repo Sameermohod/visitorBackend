@@ -8,6 +8,9 @@ const zod_1 = require("zod");
 const db_1 = __importDefault(require("../../configs/db"));
 const apiResponse_1 = __importDefault(require("../../utils/apiResponse"));
 const logger_1 = __importDefault(require("../../configs/logger"));
+const pagination_1 = require("../../utils/pagination");
+const tenancyAccess_1 = require("../../services/tenancyAccess");
+const payments_1 = require("../../services/payments");
 const emailService_1 = require("../../utils/emailService");
 const preApproveSchema = zod_1.z.object({
     name: zod_1.z.string().min(1),
@@ -68,14 +71,12 @@ class VisitorController {
                         checkedInBy: guardId,
                         notes: data.notes || 'Manual walk-in check-in completed at gate',
                     },
+                    include: { visitor: true, flat: true },
                 });
                 return { visitor, log };
             });
-            // Fetch the full log to return to client
-            const fullLog = await db_1.default.visitorLog.findUnique({
-                where: { id: result.log.id },
-                include: { visitor: true, flat: true },
-            });
+            // The log already carries visitor + flat, so no second round-trip is needed
+            const fullLog = result.log;
             // Asynchronously fetch occupants and notify them via SMTP email alerts
             db_1.default.resident.findMany({
                 where: { flatId: data.flatId, tenantId, deletedAt: null },
@@ -86,6 +87,7 @@ class VisitorController {
             }).then((flatOccupants) => {
                 if (flatOccupants && flatOccupants.length > 0 && fullLog) {
                     const flatNumber = flatOccupants[0].flat?.number || 'your flat';
+                    (0, payments_1.notifyUsers)(tenantId, flatOccupants.map((o) => o.userId), `Visitor at the gate: ${fullLog.visitor.name}`, `${fullLog.visitor.purpose || 'A visitor'} · checked in for flat ${flatNumber}`, 'VISITOR').catch((err) => logger_1.default.error('Notify: visitor alert failed:', err));
                     for (const occ of flatOccupants) {
                         if (occ.user && occ.user.email) {
                             (0, emailService_1.sendEmail)(occ.user.email, `🚨 Gate Security: Manual Visitor Checked In at Main Entrance`, (0, emailService_1.getVisitorGateAlertTemplate)(fullLog.visitor.name, fullLog.visitor.visitorType, fullLog.visitor.vehicleNumber, fullLog.visitor.purpose, flatNumber, new Date().toLocaleString())).catch((err) => logger_1.default.error(`SMTP: Failed to notify resident ${occ.user.email} of manual visitor check-in:`, err));
@@ -103,6 +105,8 @@ class VisitorController {
     // Pre-approve guest (Resident only)
     static async preApprove(req, res, next) {
         try {
+            if (!(await (0, tenancyAccess_1.allowTenantFeature)(req, res, 'visitors')))
+                return; // a renter's passes can be switched off by the owner
             const tenantId = req.tenantId;
             const data = preApproveSchema.parse(req.body);
             // Verify user is resident
@@ -140,7 +144,7 @@ class VisitorController {
     static async getLogs(req, res, next) {
         try {
             const tenantId = req.tenantId;
-            const logs = await db_1.default.visitorLog.findMany({
+            const logs = await db_1.default.visitorLog.findMany({ relationLoadStrategy: 'join',
                 where: { tenantId },
                 include: {
                     visitor: true,
@@ -158,6 +162,7 @@ class VisitorController {
                     },
                 },
                 orderBy: { checkedInAt: 'desc' },
+                ...(0, pagination_1.getPagination)(req),
             });
             return apiResponse_1.default.success(res, logs, 'Visitor logs loaded successfully');
         }
@@ -168,6 +173,8 @@ class VisitorController {
     // Get active pre-approvals for Resident
     static async getMyPreApprovals(req, res, next) {
         try {
+            if (!(await (0, tenancyAccess_1.allowTenantFeature)(req, res, 'visitors')))
+                return;
             const tenantId = req.tenantId;
             const resident = await db_1.default.resident.findFirst({
                 where: { userId: req.user?.id, tenantId, deletedAt: null },
@@ -178,6 +185,7 @@ class VisitorController {
             const preApprovals = await db_1.default.visitor.findMany({
                 where: { tenantId, preApprovedBy: resident.id },
                 orderBy: { createdAt: 'desc' },
+                ...(0, pagination_1.getPagination)(req),
             });
             return apiResponse_1.default.success(res, preApprovals, 'Pre-approvals loaded successfully');
         }
@@ -196,12 +204,12 @@ class VisitorController {
             if (!qrCode) {
                 return apiResponse_1.default.error(res, 'Missing QR code query parameter', null, 400);
             }
-            const visitor = await db_1.default.visitor.findFirst({
+            const visitor = await db_1.default.visitor.findFirst({ relationLoadStrategy: 'join',
                 where: { tenantId, qrCode },
                 include: {
                     resident: {
                         include: {
-                            user: true,
+                            user: { select: { id: true, firstName: true, lastName: true, phoneNumber: true } },
                             flat: true,
                         },
                     },
@@ -248,7 +256,7 @@ class VisitorController {
             // Execute Stored Procedure
             await db_1.default.$executeRawUnsafe(`CALL procedure_log_visitor_entry($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text, NULL::uuid)`, tenantId, visitorId, flatId, guardUserId, notes);
             // Fetch the newly logged entry to return to client
-            const latestLog = await db_1.default.visitorLog.findFirst({
+            const latestLog = await db_1.default.visitorLog.findFirst({ relationLoadStrategy: 'join',
                 where: { tenantId, visitorId, flatId },
                 orderBy: { checkedInAt: 'desc' },
                 include: { visitor: true, flat: true },
@@ -263,6 +271,7 @@ class VisitorController {
             }).then((flatOccupants) => {
                 if (flatOccupants && flatOccupants.length > 0 && latestLog) {
                     const flatNumber = flatOccupants[0].flat?.number || 'your flat';
+                    (0, payments_1.notifyUsers)(tenantId, flatOccupants.map((o) => o.userId), `Visitor at the gate: ${latestLog.visitor.name}`, `${latestLog.visitor.purpose || 'A visitor'} · checked in for flat ${flatNumber}`, 'VISITOR').catch((err) => logger_1.default.error('Notify: visitor alert failed:', err));
                     for (const occ of flatOccupants) {
                         if (occ.user && occ.user.email) {
                             (0, emailService_1.sendEmail)(occ.user.email, `🚨 Gate Security: Visitor Checked In at Main Entrance`, (0, emailService_1.getVisitorGateAlertTemplate)(latestLog.visitor.name, latestLog.visitor.visitorType, latestLog.visitor.vehicleNumber, latestLog.visitor.purpose, flatNumber, new Date().toLocaleString())).catch((err) => logger_1.default.error(`SMTP: Failed to notify resident ${occ.user.email} of visitor check-in:`, err));
@@ -335,7 +344,7 @@ class VisitorController {
             const passId = req.params.passId;
             const userRole = req.user.role;
             const userId = req.user.id;
-            if (userRole === 'Resident') {
+            if (userRole === 'Resident' || userRole === 'Tenant') {
                 const resident = await db_1.default.resident.findFirst({
                     where: { userId, tenantId, deletedAt: null },
                 });
@@ -352,7 +361,7 @@ class VisitorController {
                     return apiResponse_1.default.error(res, 'Access denied: you can only delete passes created by you.', null, 403);
                 }
             }
-            else if (userRole !== 'Society Admin' && userRole !== 'Super Admin') {
+            else if (userRole !== 'Society Admin' && userRole !== 'Society Secretary' && userRole !== 'Super Admin') {
                 return apiResponse_1.default.error(res, 'Access denied: unauthorized.', null, 403);
             }
             // Delete the visitor pass

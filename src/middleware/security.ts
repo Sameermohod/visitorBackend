@@ -99,8 +99,9 @@ export const corsOptions: CorsOptions = {
 export const validTenantHeaders: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
   const id = req.headers['x-tenant-id'];
   const slug = req.headers['x-tenant-slug'];
-  if (id !== undefined && !(typeof id === 'string' && /^[0-9a-f-]{36}$/i.test(id))) return res.status(400).json({ success: false, message: 'Invalid society id.' });
-  if (slug !== undefined && !(typeof slug === 'string' && /^[a-z0-9-]{1,64}$/i.test(slug))) return res.status(400).json({ success: false, message: 'Invalid society name.' });
+  // An empty header means "not set" (the web app sends x-tenant-id: "" before the first sign-in)
+  if (id !== undefined && id !== '' && !(typeof id === 'string' && /^[0-9a-f-]{36}$/i.test(id))) return res.status(400).json({ success: false, message: 'Invalid society id.' });
+  if (slug !== undefined && slug !== '' && !(typeof slug === 'string' && /^[a-z0-9-]{1,64}$/i.test(slug))) return res.status(400).json({ success: false, message: 'Invalid society name.' });
   next();
 };
 
